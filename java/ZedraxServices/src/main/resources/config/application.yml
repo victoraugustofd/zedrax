@@ -1,0 +1,48 @@
+# Database
+
+# SQLite
+#spring:
+#  datasource:
+#    driver: org.sqlite.JDBC
+#    url: jdbc:sqlite:D:\OneDrive\Documents\Personal\Studies\Faculdade\Ciência da Computação\tcc\database\zedrax.db
+#    user: 
+#    password: 
+
+# MySQL
+spring:
+  datasource:
+    driver: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/zedrax?useTimezone=true&serverTimezone=UTC&useSSL=false
+    user: root
+    password: root
+
+# Hibernate
+hibernate:
+#  dialect: br.com.zedrax.zedraxservices.dialect.SQLiteDialect
+  dialect: org.hibernate.dialect.MySQL57Dialect
+  generate_ddl: true
+  show_sql: true
+  jdbc:
+    fetch_size: 100
+  hbm2ddl:
+    auto: update
+  entity_scan: br.com.zedrax.zedraxservices.model
+  repositories_scan: br.com.zedrax.zedraxservices.repository
+  persistence_unit: default
+
+# Piece Types
+piece_type:
+  king: KING
+  queen: QUEEN
+  rook: ROOK
+  bishop: BISHOP
+  knight: KNIGHT
+  warrior: WARRIOR
+  tank: TANK
+  archer: ARCHER
+  ninja: NINJA
+
+# Piece Type Classes
+piece_type_class:
+  pawn: PAWN
+  elite: ELITE
