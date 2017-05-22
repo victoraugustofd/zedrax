@@ -15,6 +15,11 @@ spring:
     url: jdbc:mysql://localhost:3306/zedrax?useTimezone=true&serverTimezone=UTC&useSSL=false
     user: root
     password: root
+  queries:
+    users-query: select email, password, active from user where email=?
+    roles-query: select u.email, r.role from user u inner join user_role ur on(u.user_id=ur.user_id) inner join role r on(ur.role_id=r.role_id) where u.email=?
+  config:
+    components_scan: br.com.zedrax.services
 
 # Hibernate
 hibernate:
@@ -26,9 +31,18 @@ hibernate:
     fetch_size: 100
   hbm2ddl:
     auto: update
-  entity_scan: br.com.zedrax.zedraxservices.model
-  repositories_scan: br.com.zedrax.zedraxservices.repository
+  entity_scan: br.com.zedrax.services.model
+  repositories_scan: br.com.zedrax.services.repository
   persistence_unit: default
+
+# Data for Loaders
+# Account Status
+account_status:
+  waiting_confirmation: WAITING_CONFIRMATION
+  active: ACTIVE
+  inactive: INACTIVE
+  blocked: BLOCKED
+  deleted: DELETED
 
 # Piece Types
 piece_type:
@@ -46,3 +60,24 @@ piece_type:
 piece_type_class:
   pawn: PAWN
   elite: ELITE
+
+# Settings
+settings:
+  group:
+    audio: AUDIO
+    display: DISPLAY
+  attribute:
+    audio:
+      music:
+        description: MUSIC
+        default_value: 10
+      sfx:
+        description: SFX
+        default_value: 10
+      speech:
+        description: SPEECH
+        default_value: 10
+    display:
+      resolution:
+        description: RESOLUTION
+        default_value: 10
