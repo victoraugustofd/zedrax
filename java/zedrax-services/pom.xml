@@ -4,7 +4,7 @@
 	<groupId>br.com.zedrax.services</groupId>
 	<artifactId>zedrax-services</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ZedraxServices</name>
+	<name>Zedrax Services</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,12 +28,6 @@
 			<version>1.5.2.RELEASE</version>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-			<version>1.5.3.RELEASE</version>
-		</dependency> -->
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -44,6 +38,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 			<version>1.5.3.RELEASE</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-mail</artifactId>
+		    <version>1.5.3.RELEASE</version>
 		</dependency>
 
 		<!-- Database -->

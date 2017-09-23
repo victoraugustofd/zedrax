@@ -18,9 +18,20 @@ spring:
   queries:
     users-query: select email, password, active from user where email=?
     roles-query: select u.email, r.role from user u inner join user_role ur on(u.user_id=ur.user_id) inner join role r on(ur.role_id=r.role_id) where u.email=?
-  config:
-    components_scan: br.com.zedrax.services
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 
+    password: 
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connecttimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
 # Hibernate
 hibernate:
 #  dialect: br.com.zedrax.zedraxservices.dialect.SQLiteDialect

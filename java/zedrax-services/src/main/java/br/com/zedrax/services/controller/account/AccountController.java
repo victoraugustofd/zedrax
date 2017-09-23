@@ -21,9 +21,11 @@ public class AccountController
 								  @RequestParam( "name" ) String name,
 								  @RequestParam( "password" ) String password )
 	{
-		service.createAccount( email, emailInfoFlag, name, password );
+		boolean success = false;
 		
-		return false;
+		success = service.createAccount( email, emailInfoFlag, name, password );
+		
+		return success;
 	}
 	
 	@RequestMapping( value = "activateAccount", method = RequestMethod.GET )

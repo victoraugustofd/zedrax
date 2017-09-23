@@ -29,13 +29,16 @@ public class AccountServiceImpl implements AccountService
 	@Override
 	public boolean createAccount( String email, Boolean emailInfoFlag, String name, String password )
 	{
+		Account account = null;
+		
 		AccountStatus accountStatus = accountStatusService
 				  					  .findByStatus( environment.getProperty( "account_status.waiting_confirmation" ) );
 		
-		Account account = new Account( email, emailInfoFlag, name, password, accountStatus );
+		account = new Account( email, emailInfoFlag, name, password, accountStatus );
 		
-		repository.save( account );
-		return false;
+		account = repository.save( account );
+		
+		return account != null;
 	}
 
 	@Override
