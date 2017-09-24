@@ -18,96 +18,69 @@ import br.com.zedrax.services.model.support.RangeType;
  * 
  */
 @Entity
-@Table( name = "\"piece_range\"" )
-public class PieceRange implements Serializable
-{
+@Table(name = "\"piece_range\"")
+public class PieceRange implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-	@GeneratedValue( strategy = GenerationType.IDENTITY )
-	@Column( name = "\"id_piece_range\"",
-			 nullable = false,
-			 insertable = false,
-			 updatable = false )
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "\"id_piece_range\"", nullable = false, insertable = false, updatable = false)
 	private Long idPieceRange;
-	
-	@Column( name = "\"range_x\"", nullable = false )
+
+	@Column(name = "\"range_x\"", nullable = false)
 	private Byte rangeX;
-	
-	@Column( name = "\"range_y\"", nullable = false )
+
+	@Column(name = "\"range_y\"", nullable = false)
 	private Byte rangeY;
-	
-	@ManyToOne( targetEntity = PieceSkill.class )
-	@JoinColumn( name = "\"id_piece_skill\"", nullable = false )
-	private PieceSkill pieceSkill;
-	
-	@ManyToOne( targetEntity = RangeType.class )
-	@JoinColumn( name = "\"id_range_type\"", nullable = false )
+
+	@ManyToOne(targetEntity = RangeType.class)
+	@JoinColumn(name = "\"id_range_type\"", nullable = false)
 	private RangeType rangeType;
-	
-	@ManyToOne( targetEntity = Piece.class )
-	@JoinColumn( name = "\"id_piece\"", nullable = false )
+
+	@ManyToOne(targetEntity = Piece.class)
+	@JoinColumn(name = "\"id_piece\"", nullable = false)
 	private Piece piece;
-	
-	public PieceRange() {}
-	
-	public Long getIdPieceRange()
-	{
+
+	public PieceRange() {
+	}
+
+	public Long getIdPieceRange() {
 		return idPieceRange;
 	}
-	
-	public void setIdPieceRange( Long idPieceRange )
-	{
+
+	public void setIdPieceRange(Long idPieceRange) {
 		this.idPieceRange = idPieceRange;
 	}
-	
-	public Byte getRangeX()
-	{
+
+	public Byte getRangeX() {
 		return rangeX;
 	}
-	
-	public void setRangeX( Byte rangeX )
-	{
+
+	public void setRangeX(Byte rangeX) {
 		this.rangeX = rangeX;
 	}
-	
-	public Byte getRangeY()
-	{
+
+	public Byte getRangeY() {
 		return rangeY;
 	}
-	
-	public void setRangeY( Byte rangeY )
-	{
+
+	public void setRangeY(Byte rangeY) {
 		this.rangeY = rangeY;
 	}
-	
-	public PieceSkill getPieceSkill()
-	{
-		return pieceSkill;
-	}
-	
-	public void setPieceSkill( PieceSkill pieceSkill )
-	{
-		this.pieceSkill = pieceSkill;
-	}
-	
-	public RangeType getRangeType()
-	{
+
+	public RangeType getRangeType() {
 		return rangeType;
 	}
-	
-	public void setRangeType( RangeType rangeType )
-	{
+
+	public void setRangeType(RangeType rangeType) {
 		this.rangeType = rangeType;
 	}
-	
-	public Piece getPiece()
-	{
+
+	public Piece getPiece() {
 		return piece;
 	}
-	
-	public void setPiece( Piece piece )
-	{
+
+	public void setPiece(Piece piece) {
 		this.piece = piece;
 	}
 }

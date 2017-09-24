@@ -10,19 +10,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.zedrax.services.model.piece.PieceType;
-import br.com.zedrax.services.service.intf.piece.PieceTypeService;
+import br.com.zedrax.services.service.interfaces.piece.IPieceTypeService;
 
-@RestController( "pieceTypeController" )
-public class PieceTypeController
-{
+@RestController("pieceTypeController")
+public class PieceTypeController {
 	@Autowired
-	private PieceTypeService service;
-	
-	@RequestMapping( value = "retrievePieceTypeList", method = RequestMethod.GET )
-	public ResponseEntity< List< PieceType > > retrievePieceTypeListRest()
-	{
-		List< PieceType > pieceTypeList = service.retrievePieceTypeList();
-		
-		return new ResponseEntity< List< PieceType > >( pieceTypeList, HttpStatus.OK );
+	private IPieceTypeService service;
+
+	@RequestMapping(value = "retrievePieceTypeList", method = RequestMethod.GET)
+	public ResponseEntity<List<PieceType>> retrievePieceTypeListRest() {
+		List<PieceType> pieceTypeList = service.retrievePieceTypeList();
+
+		return new ResponseEntity<List<PieceType>>(pieceTypeList, HttpStatus.OK);
 	}
 }

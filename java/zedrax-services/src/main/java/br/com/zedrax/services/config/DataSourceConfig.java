@@ -8,30 +8,28 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
-public class DataSourceConfig
-{
-	@Value( "${spring.datasource.driver}" )
+public class DataSourceConfig {
+	@Value("${spring.datasource.driver}")
 	private String dataSourceDriver;
-	
-	@Value( "${spring.datasource.url}" )
+
+	@Value("${spring.datasource.url}")
 	private String dataSourceUrl;
-	
-	@Value( "${spring.datasource.user}" )
+
+	@Value("${spring.datasource.user}")
 	private String dataSourceUser;
-	
-	@Value( "${spring.datasource.password}" )
+
+	@Value("${spring.datasource.password}")
 	private String dataSourcePassword;
-	
-	@Bean( name = "dataSource" )
-	public DataSource dataSource()
-	{
+
+	@Bean(name = "dataSource")
+	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		
-		dataSource.setDriverClassName( dataSourceDriver );
-		dataSource.setUrl( dataSourceUrl );
-		dataSource.setUsername( dataSourceUser );
-		dataSource.setPassword( dataSourcePassword );
-		
+
+		dataSource.setDriverClassName(dataSourceDriver);
+		dataSource.setUrl(dataSourceUrl);
+		dataSource.setUsername(dataSourceUser);
+		dataSource.setPassword(dataSourcePassword);
+
 		return dataSource;
 	}
 }

@@ -7,17 +7,15 @@ import org.springframework.stereotype.Service;
 
 import br.com.zedrax.services.model.settings.SettingsAttributes;
 import br.com.zedrax.services.repository.settings.SettingsAttributesRepository;
-import br.com.zedrax.services.service.intf.settings.SettingsAttributesService;
+import br.com.zedrax.services.service.interfaces.settings.ISettingsAttributesService;
 
-@Service( "settingsAttributesService" )
-public class SettingsAttributesServiceImpl implements SettingsAttributesService
-{
+@Service("settingsAttributesService")
+public class SettingsAttributesService implements ISettingsAttributesService {
 	@Autowired
 	private SettingsAttributesRepository repository;
 
 	@Override
-	public List< SettingsAttributes > findAll()
-	{
+	public List<SettingsAttributes> findAll() {
 		return repository.findAll();
 	}
 }

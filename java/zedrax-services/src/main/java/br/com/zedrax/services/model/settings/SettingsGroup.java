@@ -20,80 +20,66 @@ import org.hibernate.validator.constraints.Length;
  * 
  */
 @Entity
-@Table( name = "\"settings_group\"",
-		uniqueConstraints = @UniqueConstraint( columnNames = "\"group\"" ) )
-public class SettingsGroup implements Serializable
-{
+@Table(name = "\"settings_group\"", uniqueConstraints = @UniqueConstraint(columnNames = "\"group\""))
+public class SettingsGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-	@GeneratedValue( strategy = GenerationType.IDENTITY )
-	@Column( name = "\"id_settings_group\"",
-			 nullable = false,
-			 insertable = false,
-			 updatable = false )
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "\"id_settings_group\"", nullable = false, insertable = false, updatable = false)
 	private Long idSettingsGroup;
-	
-	@Column( name = "\"group\"", nullable = false )
-	@Length( max = 45 )
+
+	@Column(name = "\"group\"", nullable = false)
+	@Length(max = 45)
 	private String group;
-	
-	@OneToMany( mappedBy = "settingsGroup", targetEntity = SettingsAttributes.class)
-	private List< SettingsAttributes > settingsAttributes;
-	
-	public SettingsGroup() {}
-	
-	public SettingsGroup( String group )
-	{
-		setGroup( group );
+
+	@OneToMany(mappedBy = "settingsGroup", targetEntity = SettingsAttributes.class)
+	private List<SettingsAttributes> settingsAttributes;
+
+	public SettingsGroup() {
 	}
-	
-	public Long getIdSettingsGroup()
-	{
+
+	public SettingsGroup(String group) {
+		setGroup(group);
+	}
+
+	public Long getIdSettingsGroup() {
 		return idSettingsGroup;
 	}
-	
-	public void setIdSettingsGroup( Long idSettingsGroup )
-	{
+
+	public void setIdSettingsGroup(Long idSettingsGroup) {
 		this.idSettingsGroup = idSettingsGroup;
 	}
-	
-	public String getGroup()
-	{
+
+	public String getGroup() {
 		return group;
 	}
-	
-	public void setGroup( String group )
-	{
+
+	public void setGroup(String group) {
 		this.group = group;
 	}
-	
-	public List< SettingsAttributes > getSettingsAttributes()
-	{
+
+	public List<SettingsAttributes> getSettingsAttributes() {
 		return settingsAttributes;
 	}
-	
-	public void setSettingsAttributes( List< SettingsAttributes > settingsAttributes )
-	{
+
+	public void setSettingsAttributes(List<SettingsAttributes> settingsAttributes) {
 		this.settingsAttributes = settingsAttributes;
 	}
-	
+
 	@Override
-	public boolean equals( Object obj )
-	{
+	public boolean equals(Object obj) {
 		boolean equals = false;
-		
-		if ( obj != this )
-		{
-			if ( obj instanceof SettingsGroup )
-			{
-				SettingsGroup settingsGroup = ( SettingsGroup ) obj;
-				
-				if ( Objects.equals( group, settingsGroup.getGroup() ) )
+
+		if (obj != this) {
+			if (obj instanceof SettingsGroup) {
+				SettingsGroup settingsGroup = (SettingsGroup) obj;
+
+				if (Objects.equals(group, settingsGroup.getGroup()))
 					equals = true;
 			}
 		}
-		
+
 		return equals;
 	}
 }

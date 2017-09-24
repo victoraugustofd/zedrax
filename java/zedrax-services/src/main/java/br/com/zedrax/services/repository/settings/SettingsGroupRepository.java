@@ -5,8 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.zedrax.services.model.settings.SettingsGroup;
 
-@Repository( "settingsGroupRepository" )
-public interface SettingsGroupRepository extends JpaRepository< SettingsGroup, Long >
-{
-	
+@Repository("settingsGroupRepository")
+public interface SettingsGroupRepository extends JpaRepository<SettingsGroup, Long> {
+
 }

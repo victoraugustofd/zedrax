@@ -5,8 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.zedrax.services.model.piece.PieceType;
 
-@Repository( "pieceTypeRepository" )
-public interface PieceTypeRepository extends JpaRepository< PieceType, Long >
-{
-	
+@Repository("pieceTypeRepository")
+public interface PieceTypeRepository extends JpaRepository<PieceType, Long> {
+
 }
