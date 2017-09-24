@@ -20,7 +20,7 @@ import br.com.zedrax.services.model.settings.SettingsGroup;
 import br.com.zedrax.services.repository.settings.SettingsAttributesRepository;
 import br.com.zedrax.services.repository.settings.SettingsGroupRepository;
 
-@Component
+@Component("settingsAttributesLoader")
 @Order(value = 4)
 public class SettingsAttributesLoader implements ApplicationRunner {
 	@Value("${settings.attribute.audio.music.description}")

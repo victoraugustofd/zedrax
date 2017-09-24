@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,25 +21,25 @@ import org.hibernate.validator.constraints.Length;
  * 
  */
 @Entity
-@Table(name = "\"settings_attributes\"", uniqueConstraints = @UniqueConstraint(columnNames = "\"attribute\""))
+@Table(name = "settings_attributes", uniqueConstraints = @UniqueConstraint(name = "uk_settings_attributes__attribute", columnNames = "attribute"))
 public class SettingsAttributes implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "\"id_settings_attributes\"", nullable = false, insertable = false, updatable = false)
+	@Column(name = "id_settings_attributes", nullable = false, insertable = false, updatable = false)
 	private Long idSettingsAttributes;
 
-	@Column(name = "\"attribute\"", nullable = false)
+	@Column(name = "attribute", nullable = false)
 	@Length(max = 45)
 	private String attribute;
 
-	@Column(name = "\"default_value\"", nullable = false)
+	@Column(name = "default_value", nullable = false)
 	@Length(max = 45)
 	private String defaultValue;
 
 	@ManyToOne(targetEntity = SettingsGroup.class)
-	@JoinColumn(name = "\"id_settings_group\"", nullable = false)
+	@JoinColumn(name = "id_settings_group", nullable = false, foreignKey = @ForeignKey(name = "fk_settings_attribute__settings_group"))
 	private SettingsGroup settingsGroup;
 
 	public SettingsAttributes() {

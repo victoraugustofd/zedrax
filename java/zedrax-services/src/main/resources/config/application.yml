@@ -34,7 +34,7 @@ piece_type:
   ninja: NINJA
 
 # Piece Type Classes
-piece_type_class:
+piece_class:
   pawn: PAWN
   elite: ELITE
 
@@ -58,3 +58,9 @@ settings:
       resolution:
         description: RESOLUTION
         default_value: 10
+
+# Action
+action:
+  type:
+    move: MOVE
+    attack: ATTACK

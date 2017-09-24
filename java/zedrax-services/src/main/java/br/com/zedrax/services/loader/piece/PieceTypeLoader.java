@@ -15,12 +15,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import br.com.zedrax.services.model.piece.PieceClass;
 import br.com.zedrax.services.model.piece.PieceType;
-import br.com.zedrax.services.model.piece.PieceTypeClass;
-import br.com.zedrax.services.repository.piece.PieceTypeClassRepository;
+import br.com.zedrax.services.repository.piece.PieceClassRepository;
 import br.com.zedrax.services.repository.piece.PieceTypeRepository;
 
-@Component
+@Component("pieceTypeLoader")
 @Order(value = 2)
 public class PieceTypeLoader implements ApplicationRunner {
 	@Value("${piece_type.king}")
@@ -57,7 +57,7 @@ public class PieceTypeLoader implements ApplicationRunner {
 	private PieceTypeRepository pieceTypeRepository;
 
 	@Autowired
-	private PieceTypeClassRepository pieceTypeClassRepository;
+	private PieceClassRepository pieceClassRepository;
 
 	@Autowired
 	private Environment environment;
@@ -66,11 +66,11 @@ public class PieceTypeLoader implements ApplicationRunner {
 		List<PieceType> listFromDb = pieceTypeRepository.findAll();
 		List<PieceType> newList = new ArrayList<>();
 
-		String pawn = environment.getProperty("piece_type_class.pawn");
-		String elite = environment.getProperty("piece_type_class.elite");
+		String pawn = environment.getProperty("piece_class.pawn");
+		String elite = environment.getProperty("piece_class.elite");
 
-		Map<String, PieceTypeClass> pieceTypeClasses = pieceTypeClassRepository.findAll().stream()
-				.collect(Collectors.toMap(PieceTypeClass::getTypeClass, Function.identity()));
+		Map<String, PieceClass> pieceTypeClasses = pieceClassRepository.findAll().stream()
+				.collect(Collectors.toMap(PieceClass::getClazz, Function.identity()));
 
 		newList.add(new PieceType(king, pieceTypeClasses.get(elite)));
 		newList.add(new PieceType(queen, pieceTypeClasses.get(elite)));

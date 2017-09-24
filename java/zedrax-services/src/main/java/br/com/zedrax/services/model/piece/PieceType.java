@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,22 +24,22 @@ import org.hibernate.validator.constraints.Length;
  * 
  */
 @Entity
-@Table(name = "\"piece_type\"", uniqueConstraints = @UniqueConstraint(columnNames = "\"type\""))
+@Table(name = "piece_type", uniqueConstraints = @UniqueConstraint(name = "uk_piece_type__type", columnNames = "type"))
 public class PieceType implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "\"id_piece_type\"", nullable = false, insertable = false, updatable = false)
+	@Column(name = "id_piece_type", nullable = false, insertable = false, updatable = false)
 	private Long idPieceType;
 
 	@Column(name = "\"type\"", nullable = false)
 	@Length(max = 10)
 	private String type;
 
-	@ManyToOne(targetEntity = PieceTypeClass.class)
-	@JoinColumn(name = "\"id_piece_type_class\"", nullable = false)
-	private PieceTypeClass pieceTypeClass;
+	@ManyToOne(targetEntity = PieceClass.class)
+	@JoinColumn(name = "id_piece_class", nullable = false, foreignKey = @ForeignKey(name = "fk_piece_type__piece_class"))
+	private PieceClass pieceClass;
 
 	@OneToMany(mappedBy = "pieceType", targetEntity = Piece.class)
 	private List<Piece> piece;
@@ -46,9 +47,9 @@ public class PieceType implements Serializable {
 	public PieceType() {
 	}
 
-	public PieceType(String type, PieceTypeClass pieceTypeClass) {
+	public PieceType(String type, PieceClass pieceClass) {
 		setType(type);
-		setPieceTypeClass(pieceTypeClass);
+		setPieceTypeClass(pieceClass);
 	}
 
 	public Long getIdPieceType() {
@@ -67,12 +68,12 @@ public class PieceType implements Serializable {
 		this.type = type;
 	}
 
-	public PieceTypeClass getPieceTypeClass() {
-		return pieceTypeClass;
+	public PieceClass getPieceTypeClass() {
+		return pieceClass;
 	}
 
-	public void setPieceTypeClass(PieceTypeClass pieceTypeClass) {
-		this.pieceTypeClass = pieceTypeClass;
+	public void setPieceTypeClass(PieceClass pieceClass) {
+		this.pieceClass = pieceClass;
 	}
 
 	@Override

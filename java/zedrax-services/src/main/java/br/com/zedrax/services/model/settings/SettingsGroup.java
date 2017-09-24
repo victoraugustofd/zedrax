@@ -20,13 +20,13 @@ import org.hibernate.validator.constraints.Length;
  * 
  */
 @Entity
-@Table(name = "\"settings_group\"", uniqueConstraints = @UniqueConstraint(columnNames = "\"group\""))
+@Table(name = "settings_group", uniqueConstraints = @UniqueConstraint(name = "uk_settings_group__group", columnNames = "group"))
 public class SettingsGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "\"id_settings_group\"", nullable = false, insertable = false, updatable = false)
+	@Column(name = "id_settings_group", nullable = false, insertable = false, updatable = false)
 	private Long idSettingsGroup;
 
 	@Column(name = "\"group\"", nullable = false)

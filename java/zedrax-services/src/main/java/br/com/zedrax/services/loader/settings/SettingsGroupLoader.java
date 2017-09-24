@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import br.com.zedrax.services.model.settings.SettingsGroup;
 import br.com.zedrax.services.repository.settings.SettingsGroupRepository;
 
-@Component("SettingsGroupLoader")
+@Component("settingsGroupLoader")
 @Order(value = 3)
 public class SettingsGroupLoader implements ApplicationRunner {
 	@Value("${settings.group.audio}")
