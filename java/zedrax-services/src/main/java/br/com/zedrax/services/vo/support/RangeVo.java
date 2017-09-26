@@ -13,6 +13,7 @@ public class RangeVo {
 	private Boolean topLeft;
 	private Boolean bottomRight;
 	private Boolean bottomLeft;
+	private Boolean isActionInL;
 
 	public Long getIdRange() {
 		return idRange;
@@ -100,5 +101,13 @@ public class RangeVo {
 
 	public void setBottomLeft(Boolean bottomLeft) {
 		this.bottomLeft = bottomLeft;
+	}
+
+	public Boolean getIsActionInL() {
+		return isActionInL;
+	}
+
+	public void setIsActionInL(Boolean isActionInL) {
+		this.isActionInL = isActionInL;
 	}
 }

@@ -23,32 +23,33 @@ import br.com.zedrax.services.repository.piece.PieceTypeRepository;
 @Component("pieceTypeLoader")
 @Order(value = 2)
 public class PieceTypeLoader implements ApplicationRunner {
+
+	@Value("${piece_type.archer}")
+	private String archer;
+
+	@Value("${piece_type.warrior}")
+	private String warrior;
+
+	@Value("${piece_type.ninja}")
+	private String ninja;
+
+	@Value("${piece_type.tank}")
+	private String tank;
+
+	@Value("${piece_type.rook}")
+	private String rook;
+
+	@Value("${piece_type.knight}")
+	private String knight;
+
+	@Value("${piece_type.bishop}")
+	private String bishop;
+
 	@Value("${piece_type.king}")
 	private String king;
 
 	@Value("${piece_type.queen}")
 	private String queen;
-
-	@Value("${piece_type.rook}")
-	private String rook;
-
-	@Value("${piece_type.bishop}")
-	private String bishop;
-
-	@Value("${piece_type.knight}")
-	private String knight;
-
-	@Value("${piece_type.warrior}")
-	private String warrior;
-
-	@Value("${piece_type.tank}")
-	private String tank;
-
-	@Value("${piece_type.archer}")
-	private String archer;
-
-	@Value("${piece_type.ninja}")
-	private String ninja;
 
 	@SuppressWarnings("unused")
 	private final static Logger logger = Logger.getLogger(PieceTypeLoader.class);
@@ -72,15 +73,15 @@ public class PieceTypeLoader implements ApplicationRunner {
 		Map<String, PieceClass> pieceTypeClasses = pieceClassRepository.findAll().stream()
 				.collect(Collectors.toMap(PieceClass::getClazz, Function.identity()));
 
+		newList.add(new PieceType(archer, pieceTypeClasses.get(pawn)));
+		newList.add(new PieceType(warrior, pieceTypeClasses.get(pawn)));
+		newList.add(new PieceType(ninja, pieceTypeClasses.get(pawn)));
+		newList.add(new PieceType(tank, pieceTypeClasses.get(pawn)));
+		newList.add(new PieceType(rook, pieceTypeClasses.get(elite)));
+		newList.add(new PieceType(knight, pieceTypeClasses.get(elite)));
+		newList.add(new PieceType(bishop, pieceTypeClasses.get(elite)));
 		newList.add(new PieceType(king, pieceTypeClasses.get(elite)));
 		newList.add(new PieceType(queen, pieceTypeClasses.get(elite)));
-		newList.add(new PieceType(rook, pieceTypeClasses.get(elite)));
-		newList.add(new PieceType(bishop, pieceTypeClasses.get(elite)));
-		newList.add(new PieceType(knight, pieceTypeClasses.get(elite)));
-		newList.add(new PieceType(warrior, pieceTypeClasses.get(pawn)));
-		newList.add(new PieceType(tank, pieceTypeClasses.get(pawn)));
-		newList.add(new PieceType(archer, pieceTypeClasses.get(pawn)));
-		newList.add(new PieceType(ninja, pieceTypeClasses.get(pawn)));
 
 		newList.removeAll(listFromDb);
 

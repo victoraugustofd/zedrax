@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.zedrax.services.model.piece.Piece;
 import br.com.zedrax.services.service.interfaces.piece.IPieceService;
 import br.com.zedrax.services.vo.piece.PieceVo;
+import br.com.zedrax.services.vo.unreal.DataVo;
 
 @RestController("pieceController")
 @RequestMapping(value = "/retrieve-pieces", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -26,12 +27,24 @@ public class PieceController {
 	
 	@RequestMapping(value = "/initial-data", method = RequestMethod.GET)
 	public @ResponseBody List<PieceVo> retrievePiecesInitialData() {
+		return retrievePiecesInitialDataGeneric();
+	}
+	
+	@RequestMapping(value = "/initial-data-unreal", method = RequestMethod.GET)
+	public @ResponseBody DataVo<PieceVo> retrievePiecesInitialDataUnreal() {
+		DataVo<PieceVo> data = new DataVo<>();
+		data.setData(retrievePiecesInitialDataGeneric());
+		
+		return data;
+	}
+	
+	public List<PieceVo> retrievePiecesInitialDataGeneric() {
 		return service.retrieveInitialData()
 				.stream()
 				.map(piece -> convertEntityToVo(piece))
 				.collect(Collectors.toList());
 	}
-
+	
 	private PieceVo convertEntityToVo(Piece entity) {
 		return modelMapper.map(entity, PieceVo.class);
 	}

@@ -53,6 +53,9 @@ public class Range implements Serializable {
 	@Column(name = "bottom_left", nullable = false, columnDefinition = "BOOLEAN")
 	private Boolean bottomLeft;
 
+	@Column(name = "is_action_in_l", nullable = false, columnDefinition = "BOOLEAN")
+	private Boolean isActionInL;
+
 	public Range() {
 	}
 
@@ -142,5 +145,13 @@ public class Range implements Serializable {
 
 	public void setBottomLeft(Boolean bottomLeft) {
 		this.bottomLeft = bottomLeft;
+	}
+
+	public Boolean getIsActionInL() {
+		return isActionInL;
+	}
+
+	public void setIsActionInL(Boolean isActionInL) {
+		this.isActionInL = isActionInL;
 	}
 }
