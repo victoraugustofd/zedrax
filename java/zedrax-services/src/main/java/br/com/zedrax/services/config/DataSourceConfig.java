@@ -1,13 +1,11 @@
 package br.com.zedrax.services.config;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-@Configuration
+@Configuration("dataSourceConfig")
 public class DataSourceConfig {
 	@Value("${spring.datasource.driver}")
 	private String dataSourceDriver;
@@ -22,7 +20,7 @@ public class DataSourceConfig {
 	private String dataSourcePassword;
 
 	@Bean(name = "dataSource")
-	public DataSource dataSource() {
+	public javax.sql.DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
 		dataSource.setDriverClassName(dataSourceDriver);

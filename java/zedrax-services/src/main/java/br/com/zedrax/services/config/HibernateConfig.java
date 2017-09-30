@@ -15,7 +15,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
-@Configuration
+@Configuration("hibernateConfig")
 @EnableAutoConfiguration
 @EntityScan(basePackages = "${hibernate.entity_scan}")
 @EnableJpaRepositories(basePackages = "${hibernate.repositories_scan}")
