@@ -26,12 +26,14 @@ public class PieceController {
 	private ModelMapper modelMapper;
 	
 	@RequestMapping(value = "/initial-data", method = RequestMethod.GET)
-	public @ResponseBody List<PieceVo> retrievePiecesInitialData() {
+	@ResponseBody
+	public List<PieceVo> retrievePiecesInitialData() {
 		return retrievePiecesInitialDataGeneric();
 	}
 	
 	@RequestMapping(value = "/initial-data-unreal", method = RequestMethod.GET)
-	public @ResponseBody DataVo<PieceVo> retrievePiecesInitialDataUnreal() {
+	@ResponseBody
+	public DataVo<PieceVo> retrievePiecesInitialDataUnreal() {
 		DataVo<PieceVo> data = new DataVo<>();
 		data.setData(retrievePiecesInitialDataGeneric());
 		

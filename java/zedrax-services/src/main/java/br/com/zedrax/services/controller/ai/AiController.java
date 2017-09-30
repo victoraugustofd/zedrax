@@ -17,7 +17,8 @@ public class AiController {
 	private IAiService service;
 
 	@RequestMapping(value = "/process", method = RequestMethod.GET)
-	public @ResponseBody String[] processZedraxAi(@RequestParam("matrix[]") String[] matrix) {
+	@ResponseBody
+	public String[] processZedraxAi(@RequestParam("matrix[]") String[] matrix) {
 		
 		return service.process(matrix);
 	}

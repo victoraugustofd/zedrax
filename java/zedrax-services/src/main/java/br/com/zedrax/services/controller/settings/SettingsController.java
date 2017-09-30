@@ -26,7 +26,8 @@ public class SettingsController {
 	private ModelMapper modelMapper;
 
 	@RequestMapping(value = "/group", method = RequestMethod.GET)
-	public @ResponseBody List<SettingsGroupVo> retrieveSettingsGroup() {
+	@ResponseBody
+	public List<SettingsGroupVo> retrieveSettingsGroup() {
 		return service.findAllGroups()
 				.stream()
 				.map(group -> convertEntityToVo(group))
