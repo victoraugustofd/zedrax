@@ -15,14 +15,22 @@ public class AiService implements IAiService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public String[] process(String[] matrixInput) {
+	public String[][] process(String matrix) {
+		
+		String[][] matrixInput = convertInputStringToMatrix(matrix);
 		
 		pythonInterpreter.execfile(getClass().getClassLoader().getResourceAsStream("ai/first_test.py"));
 		
-		pythonInterpreter.set("matrix", matrixInput);
+		pythonInterpreter.set("matrix_input", matrixInput);
 		
-		PyList matrixOutput = (PyList) pythonInterpreter.eval("Zedrax_Ai.process_ai(matrix)");
+		PyList matrixOutput = (PyList) pythonInterpreter.eval("Zedrax_Ai.process_ai(matrix_input)");
 		
-		return (String[]) matrixOutput.stream().toArray(String[]::new);
+		return (String[][]) matrixOutput.stream().toArray(String[][]::new);
+	}
+
+	@Override
+	public String[][] convertInputStringToMatrix(String input) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

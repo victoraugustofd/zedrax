@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.zedrax.services.service.interfaces.ai.IAiService;
+import br.com.zedrax.services.vo.unreal.DataVo;
 
 @RestController("aiController")
 @RequestMapping(value = "/ai", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -18,8 +19,10 @@ public class AiController {
 
 	@RequestMapping(value = "/process", method = RequestMethod.GET)
 	@ResponseBody
-	public String[] processZedraxAi(@RequestParam("matrix[]") String[] matrix) {
+	public DataVo processZedraxAi(@RequestParam("matrix") String matrix) {
 		
-		return service.process(matrix);
+		service.process(matrix);
+		
+		return new DataVo<>();
 	}
 }
