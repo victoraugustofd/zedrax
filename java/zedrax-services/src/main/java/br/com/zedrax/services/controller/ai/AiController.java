@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.zedrax.services.service.interfaces.ai.IAiService;
 
 @RestController("aiController")
-@RequestMapping(value = "/zedrax-artifical-intelligence", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/ai", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class AiController {
 	@Autowired
 	private IAiService service;

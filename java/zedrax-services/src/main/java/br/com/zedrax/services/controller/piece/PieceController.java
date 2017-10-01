@@ -17,7 +17,7 @@ import br.com.zedrax.services.vo.piece.PieceVo;
 import br.com.zedrax.services.vo.unreal.DataVo;
 
 @RestController("pieceController")
-@RequestMapping(value = "/retrieve-pieces", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/piece", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class PieceController {
 	@Autowired
 	private IPieceService service;
@@ -25,13 +25,13 @@ public class PieceController {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	@RequestMapping(value = "/initial-data", method = RequestMethod.GET)
+	@RequestMapping(value = "/retrieve-initial-data", method = RequestMethod.GET)
 	@ResponseBody
 	public List<PieceVo> retrievePiecesInitialData() {
 		return retrievePiecesInitialDataGeneric();
 	}
 	
-	@RequestMapping(value = "/initial-data-unreal", method = RequestMethod.GET)
+	@RequestMapping(value = "/retrieve-initial-data-unreal", method = RequestMethod.GET)
 	@ResponseBody
 	public DataVo<PieceVo> retrievePiecesInitialDataUnreal() {
 		DataVo<PieceVo> data = new DataVo<>();

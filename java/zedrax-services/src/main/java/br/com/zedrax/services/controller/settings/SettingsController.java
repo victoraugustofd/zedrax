@@ -16,7 +16,7 @@ import br.com.zedrax.services.service.interfaces.settings.ISettingsService;
 import br.com.zedrax.services.vo.settings.SettingsGroupVo;
 
 @RestController("settingsController")
-@RequestMapping(value = "/retrieve-settings", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/settings", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class SettingsController {
 
 	@Autowired
