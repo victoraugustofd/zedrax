@@ -17,6 +17,7 @@ import br.com.zedrax.services.repository.support.ActionTypeRepository;
 @Component("actionTypeLoader")
 @Order(value = 5)
 public class ActionTypeLoader implements ApplicationRunner {
+	
 	@Value("${action.type.move}")
 	private String move;
 

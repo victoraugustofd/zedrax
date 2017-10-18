@@ -53,8 +53,8 @@ public class Range implements Serializable {
 	@Column(name = "bottom_left", nullable = false, columnDefinition = "BOOLEAN")
 	private Boolean bottomLeft;
 
-	@Column(name = "is_action_in_l", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean isActionInL;
+	@Column(name = "l", nullable = false, columnDefinition = "BOOLEAN")
+	private Boolean l;
 
 	public Range() {
 	}
@@ -83,7 +83,7 @@ public class Range implements Serializable {
 		this.y = y;
 	}
 
-	public Boolean getTop() {
+	public Boolean isTop() {
 		return top;
 	}
 
@@ -91,7 +91,7 @@ public class Range implements Serializable {
 		this.top = top;
 	}
 
-	public Boolean getBottom() {
+	public Boolean isBottom() {
 		return bottom;
 	}
 
@@ -99,7 +99,7 @@ public class Range implements Serializable {
 		this.bottom = bottom;
 	}
 
-	public Boolean getLeft() {
+	public Boolean isLeft() {
 		return left;
 	}
 
@@ -107,7 +107,7 @@ public class Range implements Serializable {
 		this.left = left;
 	}
 
-	public Boolean getRight() {
+	public Boolean isRight() {
 		return right;
 	}
 
@@ -115,7 +115,7 @@ public class Range implements Serializable {
 		this.right = right;
 	}
 
-	public Boolean getTopRight() {
+	public Boolean isTopRight() {
 		return topRight;
 	}
 
@@ -123,7 +123,7 @@ public class Range implements Serializable {
 		this.topRight = topRight;
 	}
 
-	public Boolean getTopLeft() {
+	public Boolean isTopLeft() {
 		return topLeft;
 	}
 
@@ -131,7 +131,7 @@ public class Range implements Serializable {
 		this.topLeft = topLeft;
 	}
 
-	public Boolean getBottomRight() {
+	public Boolean isBottomRight() {
 		return bottomRight;
 	}
 
@@ -139,7 +139,7 @@ public class Range implements Serializable {
 		this.bottomRight = bottomRight;
 	}
 
-	public Boolean getBottomLeft() {
+	public Boolean isBottomLeft() {
 		return bottomLeft;
 	}
 
@@ -147,11 +147,11 @@ public class Range implements Serializable {
 		this.bottomLeft = bottomLeft;
 	}
 
-	public Boolean getIsActionInL() {
-		return isActionInL;
+	public Boolean isL() {
+		return l;
 	}
 
-	public void setIsActionInL(Boolean isActionInL) {
-		this.isActionInL = isActionInL;
+	public void setL(Boolean l) {
+		this.l = l;
 	}
 }

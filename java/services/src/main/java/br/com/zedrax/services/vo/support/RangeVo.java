@@ -13,7 +13,7 @@ public class RangeVo {
 	private Boolean topLeft;
 	private Boolean bottomRight;
 	private Boolean bottomLeft;
-	private Boolean isActionInL;
+	private Boolean l;
 
 	public Long getIdRange() {
 		return idRange;
@@ -39,7 +39,7 @@ public class RangeVo {
 		this.y = y;
 	}
 
-	public Boolean getTop() {
+	public Boolean isTop() {
 		return top;
 	}
 
@@ -47,7 +47,7 @@ public class RangeVo {
 		this.top = top;
 	}
 
-	public Boolean getBottom() {
+	public Boolean isBottom() {
 		return bottom;
 	}
 
@@ -55,7 +55,7 @@ public class RangeVo {
 		this.bottom = bottom;
 	}
 
-	public Boolean getLeft() {
+	public Boolean isLeft() {
 		return left;
 	}
 
@@ -63,7 +63,7 @@ public class RangeVo {
 		this.left = left;
 	}
 
-	public Boolean getRight() {
+	public Boolean isRight() {
 		return right;
 	}
 
@@ -71,7 +71,7 @@ public class RangeVo {
 		this.right = right;
 	}
 
-	public Boolean getTopRight() {
+	public Boolean isTopRight() {
 		return topRight;
 	}
 
@@ -79,7 +79,7 @@ public class RangeVo {
 		this.topRight = topRight;
 	}
 
-	public Boolean getTopLeft() {
+	public Boolean isTopLeft() {
 		return topLeft;
 	}
 
@@ -87,7 +87,7 @@ public class RangeVo {
 		this.topLeft = topLeft;
 	}
 
-	public Boolean getBottomRight() {
+	public Boolean isBottomRight() {
 		return bottomRight;
 	}
 
@@ -95,7 +95,7 @@ public class RangeVo {
 		this.bottomRight = bottomRight;
 	}
 
-	public Boolean getBottomLeft() {
+	public Boolean isBottomLeft() {
 		return bottomLeft;
 	}
 
@@ -103,11 +103,11 @@ public class RangeVo {
 		this.bottomLeft = bottomLeft;
 	}
 
-	public Boolean getIsActionInL() {
-		return isActionInL;
+	public Boolean isL() {
+		return l;
 	}
 
-	public void setIsActionInL(Boolean isActionInL) {
-		this.isActionInL = isActionInL;
+	public void setL(Boolean l) {
+		this.l = l;
 	}
 }

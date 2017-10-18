@@ -64,3 +64,11 @@ action:
   type:
     move: MOVE
     attack: ATTACK
+
+# Game Settings
+game:
+  board:
+    width: 10
+    height: 10
+  turn:
+    initial-mana: 10
