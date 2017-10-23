@@ -15,17 +15,17 @@ import br.com.zedrax.services.vo.unreal.DataVo;
 @RestController("aiController")
 @RequestMapping(value = "/ai", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class AiController {
-	
-	@Autowired
-	private IAiService service;
 
-	@RequestMapping(value = "/process", method = RequestMethod.GET)
-	@ResponseBody
-	public DataVo<AiActionUnreal> processZedraxAi(@RequestParam("matrix") String matrix) {
-		
-		DataVo<AiActionUnreal> data = new DataVo<>();
-		data.setData(service.process(matrix));
-		
-		return data;
-	}
+    @Autowired
+    private IAiService service;
+
+    @RequestMapping(value = "/process", method = RequestMethod.GET)
+    @ResponseBody
+    public DataVo<AiActionUnreal> processZedraxAi(@RequestParam("matrix") String matrix) {
+
+        DataVo<AiActionUnreal> data = new DataVo<>();
+        data.setData(service.process(matrix));
+
+        return data;
+    }
 }

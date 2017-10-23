@@ -3,32 +3,32 @@ package br.com.zedrax.services.vo.settings;
 import java.util.List;
 
 public class SettingsGroupVo {
-	
-	private Long idSettingsGroup;
-	private String group;
-	private List<SettingsAttributesVo> settingsAttributes;
 
-	public Long getIdSettingsGroup() {
-		return idSettingsGroup;
-	}
+    private Long idSettingsGroup;
+    private String group;
+    private List<SettingsAttributesVo> settingsAttributes;
 
-	public void setIdSettingsGroup(Long idSettingsGroup) {
-		this.idSettingsGroup = idSettingsGroup;
-	}
+    public Long getIdSettingsGroup() {
+        return idSettingsGroup;
+    }
 
-	public String getGroup() {
-		return group;
-	}
+    public void setIdSettingsGroup(Long idSettingsGroup) {
+        this.idSettingsGroup = idSettingsGroup;
+    }
 
-	public void setGroup(String group) {
-		this.group = group;
-	}
+    public String getGroup() {
+        return group;
+    }
 
-	public List<SettingsAttributesVo> getSettingsAttributes() {
-		return settingsAttributes;
-	}
+    public void setGroup(String group) {
+        this.group = group;
+    }
 
-	public void setSettingsAttributes(List<SettingsAttributesVo> settingsAttributes) {
-		this.settingsAttributes = settingsAttributes;
-	}
+    public List<SettingsAttributesVo> getSettingsAttributes() {
+        return settingsAttributes;
+    }
+
+    public void setSettingsAttributes(List<SettingsAttributesVo> settingsAttributes) {
+        this.settingsAttributes = settingsAttributes;
+    }
 }

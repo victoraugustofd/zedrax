@@ -23,113 +23,114 @@ import br.com.zedrax.services.model.support.Action;
 @Entity
 @Table(name = "piece")
 public class Piece implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_piece", nullable = false, insertable = false, updatable = false)
-	private Long idPiece;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "name", nullable = false)
-	@Length(max = 45)
-	private String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_piece", nullable = false, insertable = false, updatable = false)
+    private Long idPiece;
 
-	@Column(name = "max_hp", nullable = false, precision = 10, scale = 2)
-	private Double maxHp;
+    @Column(name = "name", nullable = false)
+    @Length(max = 45)
+    private String name;
 
-	@Column(name = "atk", nullable = false, precision = 10, scale = 2)
-	private Double atk;
+    @Column(name = "max_hp", nullable = false, precision = 10, scale = 2)
+    private Double maxHp;
 
-	@Column(name = "def", nullable = false, precision = 10, scale = 2)
-	private Double def;
+    @Column(name = "atk", nullable = false, precision = 10, scale = 2)
+    private Double atk;
 
-	@Column(name = "xp_to_next_level", nullable = false, precision = 10, scale = 2)
-	private Double xpToNextLevel;
+    @Column(name = "def", nullable = false, precision = 10, scale = 2)
+    private Double def;
 
-	@ManyToOne(targetEntity = PieceType.class)
-	@JoinColumn(name = "id_piece-type", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__piece-type"))
-	private PieceType pieceType;
+    @Column(name = "xp_to_next_level", nullable = false, precision = 10, scale = 2)
+    private Double xpToNextLevel;
 
-	@ManyToOne(targetEntity = Action.class)
-	@JoinColumn(name = "id_action_move", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__action__move"))
-	private Action move;
+    @ManyToOne(targetEntity = PieceType.class)
+    @JoinColumn(name = "id_piece-type", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__piece-type"))
+    private PieceType pieceType;
 
-	@ManyToOne(targetEntity = Action.class)
-	@JoinColumn(name = "id_action_atk", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__action_attack"))
-	private Action attack;
+    @ManyToOne(targetEntity = Action.class)
+    @JoinColumn(name = "id_action_move", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__action__move"))
+    private Action move;
 
-	public Piece() {
-	}
+    @ManyToOne(targetEntity = Action.class)
+    @JoinColumn(name = "id_action_atk", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__action_attack"))
+    private Action attack;
 
-	public Long getIdPiece() {
-		return idPiece;
-	}
+    public Piece() {
+    }
 
-	public void setIdPiece(Long idPiece) {
-		this.idPiece = idPiece;
-	}
+    public Long getIdPiece() {
+        return idPiece;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setIdPiece(Long idPiece) {
+        this.idPiece = idPiece;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Double getMaxHp() {
-		return maxHp;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setMaxHp(Double maxHp) {
-		this.maxHp = maxHp;
-	}
+    public Double getMaxHp() {
+        return maxHp;
+    }
 
-	public Double getAtk() {
-		return atk;
-	}
+    public void setMaxHp(Double maxHp) {
+        this.maxHp = maxHp;
+    }
 
-	public void setAtk(Double atk) {
-		this.atk = atk;
-	}
+    public Double getAtk() {
+        return atk;
+    }
 
-	public Double getDef() {
-		return def;
-	}
+    public void setAtk(Double atk) {
+        this.atk = atk;
+    }
 
-	public void setDef(Double def) {
-		this.def = def;
-	}
+    public Double getDef() {
+        return def;
+    }
 
-	public Double getXpToNextLevel() {
-		return xpToNextLevel;
-	}
+    public void setDef(Double def) {
+        this.def = def;
+    }
 
-	public void setXpToNextLevel(Double xpToNextLevel) {
-		this.xpToNextLevel = xpToNextLevel;
-	}
+    public Double getXpToNextLevel() {
+        return xpToNextLevel;
+    }
 
-	public PieceType getPieceType() {
-		return pieceType;
-	}
+    public void setXpToNextLevel(Double xpToNextLevel) {
+        this.xpToNextLevel = xpToNextLevel;
+    }
 
-	public void setPieceType(PieceType pieceType) {
-		this.pieceType = pieceType;
-	}
+    public PieceType getPieceType() {
+        return pieceType;
+    }
 
-	public Action getMove() {
-		return move;
-	}
+    public void setPieceType(PieceType pieceType) {
+        this.pieceType = pieceType;
+    }
 
-	public void setMove(Action move) {
-		this.move = move;
-	}
+    public Action getMove() {
+        return move;
+    }
 
-	public Action getAttack() {
-		return attack;
-	}
+    public void setMove(Action move) {
+        this.move = move;
+    }
 
-	public void setAttack(Action attack) {
-		this.attack = attack;
-	}
+    public Action getAttack() {
+        return attack;
+    }
+
+    public void setAttack(Action attack) {
+        this.attack = attack;
+    }
 }

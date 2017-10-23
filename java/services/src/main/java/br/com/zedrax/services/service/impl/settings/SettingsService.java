@@ -12,15 +12,16 @@ import br.com.zedrax.services.service.interfaces.settings.ISettingsService;
 
 @Service("settingsService")
 public class SettingsService implements ISettingsService {
-	
-	@Autowired
-	private SettingsAttributesRepository attributesRepository;
-	
-	@Autowired
-	private SettingsGroupRepository groupRepository;
 
-	@Override
-	public List<SettingsGroup> findAllGroups() {
-		return groupRepository.findAll();
-	}
+    @Autowired
+    private SettingsAttributesRepository attributesRepository;
+
+    @Autowired
+    private SettingsGroupRepository groupRepository;
+
+    @Override
+    public List<SettingsGroup> findAllGroups() {
+
+        return groupRepository.findAll();
+    }
 }

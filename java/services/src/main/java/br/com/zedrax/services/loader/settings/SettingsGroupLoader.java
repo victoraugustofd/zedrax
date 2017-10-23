@@ -17,27 +17,29 @@ import br.com.zedrax.services.repository.settings.SettingsGroupRepository;
 @Component("settingsGroupLoader")
 @Order(value = 3)
 public class SettingsGroupLoader implements ApplicationRunner {
-	@Value("${settings.group.audio}")
-	private String audio;
 
-	@Value("${settings.group.display}")
-	private String display;
+    @Value("${settings.group.audio}")
+    private String audio;
 
-	@SuppressWarnings("unused")
-	private final static Logger logger = Logger.getLogger(SettingsGroupLoader.class);
+    @Value("${settings.group.display}")
+    private String display;
 
-	@Autowired
-	private SettingsGroupRepository repository;
+    @SuppressWarnings("unused")
+    private final static Logger logger = Logger.getLogger(SettingsGroupLoader.class);
 
-	public void run(ApplicationArguments args) {
-		List<SettingsGroup> listFromDb = repository.findAll();
-		List<SettingsGroup> newList = new ArrayList<>();
+    @Autowired
+    private SettingsGroupRepository repository;
 
-		newList.add(new SettingsGroup(audio));
-		newList.add(new SettingsGroup(display));
+    public void run(ApplicationArguments args) {
 
-		newList.removeAll(listFromDb);
+        List<SettingsGroup> listFromDb = repository.findAll();
+        List<SettingsGroup> newList = new ArrayList<>();
 
-		repository.save(newList);
-	}
+        newList.add(new SettingsGroup(audio));
+        newList.add(new SettingsGroup(display));
+
+        newList.removeAll(listFromDb);
+
+        repository.save(newList);
+    }
 }

@@ -17,28 +17,29 @@ import br.com.zedrax.services.repository.support.ActionTypeRepository;
 @Component("actionTypeLoader")
 @Order(value = 5)
 public class ActionTypeLoader implements ApplicationRunner {
-	
-	@Value("${action.type.move}")
-	private String move;
 
-	@Value("${action.type.attack}")
-	private String attack;
+    @Value("${action.type.move}")
+    private String move;
 
-	@SuppressWarnings("unused")
-	private final static Logger logger = Logger.getLogger(ActionTypeLoader.class);
+    @Value("${action.type.attack}")
+    private String attack;
 
-	@Autowired
-	private ActionTypeRepository repository;
+    @SuppressWarnings("unused")
+    private final static Logger logger = Logger.getLogger(ActionTypeLoader.class);
 
-	public void run(ApplicationArguments args) {
-		List<ActionType> listFromDb = repository.findAll();
-		List<ActionType> newList = new ArrayList<>();
+    @Autowired
+    private ActionTypeRepository repository;
 
-		newList.add(new ActionType(move));
-		newList.add(new ActionType(attack));
+    public void run(ApplicationArguments args) {
 
-		newList.removeAll(listFromDb);
+        List<ActionType> listFromDb = repository.findAll();
+        List<ActionType> newList = new ArrayList<>();
 
-		repository.save(newList);
-	}
+        newList.add(new ActionType(move));
+        newList.add(new ActionType(attack));
+
+        newList.removeAll(listFromDb);
+
+        repository.save(newList);
+    }
 }

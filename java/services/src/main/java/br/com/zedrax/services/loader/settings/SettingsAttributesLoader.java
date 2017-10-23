@@ -23,59 +23,62 @@ import br.com.zedrax.services.repository.settings.SettingsGroupRepository;
 @Component("settingsAttributesLoader")
 @Order(value = 4)
 public class SettingsAttributesLoader implements ApplicationRunner {
-	@Value("${settings.attribute.audio.music.description}")
-	private String music;
 
-	@Value("${settings.attribute.audio.sfx.description}")
-	private String sfx;
+    @Value("${settings.attribute.audio.music.description}")
+    private String music;
 
-	@Value("${settings.attribute.audio.speech.description}")
-	private String speech;
+    @Value("${settings.attribute.audio.sfx.description}")
+    private String sfx;
 
-	@Value("${settings.attribute.display.resolution.description}")
-	private String resolution;
+    @Value("${settings.attribute.audio.speech.description}")
+    private String speech;
 
-	@Value("${settings.attribute.audio.music.default-value}")
-	private String musicDefaultValue;
+    @Value("${settings.attribute.display.resolution.description}")
+    private String resolution;
 
-	@Value("${settings.attribute.audio.sfx.default-value}")
-	private String sfxDefaultValue;
+    @Value("${settings.attribute.audio.music.default-value}")
+    private String musicDefaultValue;
 
-	@Value("${settings.attribute.audio.speech.default-value}")
-	private String speechDefaultValue;
+    @Value("${settings.attribute.audio.sfx.default-value}")
+    private String sfxDefaultValue;
 
-	@Value("${settings.attribute.display.resolution.default-value}")
-	private String resolutionDefaultValue;
+    @Value("${settings.attribute.audio.speech.default-value}")
+    private String speechDefaultValue;
 
-	@SuppressWarnings("unused")
-	private final static Logger logger = Logger.getLogger(SettingsAttributesLoader.class);
+    @Value("${settings.attribute.display.resolution.default-value}")
+    private String resolutionDefaultValue;
 
-	@Autowired
-	private SettingsAttributesRepository repository;
+    @SuppressWarnings("unused")
+    private final static Logger logger = Logger.getLogger(SettingsAttributesLoader.class);
 
-	@Autowired
-	private SettingsGroupRepository settingsGroupRepository;
+    @Autowired
+    private SettingsAttributesRepository repository;
 
-	@Autowired
-	private Environment environment;
+    @Autowired
+    private SettingsGroupRepository settingsGroupRepository;
 
-	public void run(ApplicationArguments args) {
-		List<SettingsAttributes> listFromDb = repository.findAll();
-		List<SettingsAttributes> newList = new ArrayList<>();
+    @Autowired
+    private Environment environment;
 
-		String audio = environment.getProperty("settings.group.audio");
-		String display = environment.getProperty("settings.group.display");
+    public void run(ApplicationArguments args) {
+        
+        List<SettingsAttributes> listFromDb = repository.findAll();
+        List<SettingsAttributes> newList = new ArrayList<>();
 
-		Map<String, SettingsGroup> settingsGroups = settingsGroupRepository.findAll().stream()
-				.collect(Collectors.toMap(SettingsGroup::getGroup, Function.identity()));
+        String audio   = environment.getProperty("settings.group.audio");
+        String display = environment.getProperty("settings.group.display");
 
-		newList.add(new SettingsAttributes(music, musicDefaultValue, settingsGroups.get(audio)));
-		newList.add(new SettingsAttributes(sfx, sfxDefaultValue, settingsGroups.get(audio)));
-		newList.add(new SettingsAttributes(speech, speechDefaultValue, settingsGroups.get(audio)));
-		newList.add(new SettingsAttributes(resolution, resolutionDefaultValue, settingsGroups.get(display)));
+        Map<String, SettingsGroup> settingsGroups = settingsGroupRepository.findAll()
+                                                                           .stream()
+                                                                           .collect(Collectors.toMap(SettingsGroup::getGroup, Function.identity()));
 
-		newList.removeAll(listFromDb);
+        newList.add(new SettingsAttributes(music, musicDefaultValue, settingsGroups.get(audio)));
+        newList.add(new SettingsAttributes(sfx, sfxDefaultValue, settingsGroups.get(audio)));
+        newList.add(new SettingsAttributes(speech, speechDefaultValue, settingsGroups.get(audio)));
+        newList.add(new SettingsAttributes(resolution, resolutionDefaultValue, settingsGroups.get(display)));
 
-		repository.save(newList);
-	}
+        newList.removeAll(listFromDb);
+
+        repository.save(newList);
+    }
 }

@@ -19,56 +19,57 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "action")
 public class Action implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_action", nullable = false, insertable = false, updatable = false)
-	private Long idAction;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "mana_cost", nullable = false)
-	private Integer manaCost;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_action", nullable = false, insertable = false, updatable = false)
+    private Long idAction;
 
-	@ManyToOne(targetEntity = ActionType.class)
-	@JoinColumn(name = "id_action_type", nullable = false, foreignKey = @ForeignKey(name = "fk_action__action_type"))
-	private ActionType actionType;
+    @Column(name = "mana_cost", nullable = false)
+    private Integer manaCost;
 
-	@ManyToOne(targetEntity = Range.class)
-	@JoinColumn(name = "id_range", nullable = false, foreignKey = @ForeignKey(name = "fk_action__range"))
-	private Range range;
+    @ManyToOne(targetEntity = ActionType.class)
+    @JoinColumn(name = "id_action_type", nullable = false, foreignKey = @ForeignKey(name = "fk_action__action_type"))
+    private ActionType actionType;
 
-	public Action() {
-	}
+    @ManyToOne(targetEntity = Range.class)
+    @JoinColumn(name = "id_range", nullable = false, foreignKey = @ForeignKey(name = "fk_action__range"))
+    private Range range;
 
-	public Long getIdAction() {
-		return idAction;
-	}
+    public Action() {
+    }
 
-	public void setIdAction(Long idAction) {
-		this.idAction = idAction;
-	}
+    public Long getIdAction() {
+        return idAction;
+    }
 
-	public Integer getManaCost() {
-		return manaCost;
-	}
+    public void setIdAction(Long idAction) {
+        this.idAction = idAction;
+    }
 
-	public void setManaCost(Integer manaCost) {
-		this.manaCost = manaCost;
-	}
+    public Integer getManaCost() {
+        return manaCost;
+    }
 
-	public ActionType getActionType() {
-		return actionType;
-	}
+    public void setManaCost(Integer manaCost) {
+        this.manaCost = manaCost;
+    }
 
-	public void setActionType(ActionType actionType) {
-		this.actionType = actionType;
-	}
+    public ActionType getActionType() {
+        return actionType;
+    }
 
-	public Range getRange() {
-		return range;
-	}
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
+    }
 
-	public void setRange(Range range) {
-		this.range = range;
-	}
+    public Range getRange() {
+        return range;
+    }
+
+    public void setRange(Range range) {
+        this.range = range;
+    }
 }

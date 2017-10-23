@@ -23,64 +23,70 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "piece-class", uniqueConstraints = @UniqueConstraint(name = "uk_piece-class__class", columnNames = "class"))
 public class PieceClass implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_piece-class", nullable = false, insertable = false, updatable = false)
-	private Long idPieceClass;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "class", nullable = false)
-	@Length(max = 10)
-	private String clazz;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_piece-class", nullable = false, insertable = false, updatable = false)
+    private Long idPieceClass;
 
-	@OneToMany(mappedBy = "pieceClass", targetEntity = PieceType.class)
-	private List<PieceType> pieceTypes;
+    @Column(name = "class", nullable = false)
+    @Length(max = 10)
+    private String clazz;
 
-	public PieceClass() {
-	}
+    @OneToMany(mappedBy = "pieceClass", targetEntity = PieceType.class)
+    private List<PieceType> pieceTypes;
 
-	public PieceClass(String clazz) {
-		setClazz(clazz);
-	}
+    public PieceClass() {
+    }
 
-	public Long getIdPieceClass() {
-		return idPieceClass;
-	}
+    public PieceClass(String clazz) {
+        
+        setClazz(clazz);
+    }
 
-	public void setIdPieceClass(Long idPieceClass) {
-		this.idPieceClass = idPieceClass;
-	}
+    public Long getIdPieceClass() {
+        return idPieceClass;
+    }
 
-	public String getClazz() {
-		return clazz;
-	}
+    public void setIdPieceClass(Long idPieceClass) {
+        this.idPieceClass = idPieceClass;
+    }
 
-	public void setClazz(String clazz) {
-		this.clazz = clazz;
-	}
+    public String getClazz() {
+        return clazz;
+    }
 
-	public List<PieceType> getPieceTypes() {
-		return pieceTypes;
-	}
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
+    }
 
-	public void setPieceTypes(List<PieceType> pieceTypes) {
-		this.pieceTypes = pieceTypes;
-	}
+    public List<PieceType> getPieceTypes() {
+        return pieceTypes;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		boolean equals = false;
+    public void setPieceTypes(List<PieceType> pieceTypes) {
+        this.pieceTypes = pieceTypes;
+    }
 
-		if (obj != this) {
-			if (obj instanceof PieceClass) {
-				PieceClass pieceType = (PieceClass) obj;
+    @Override
+    public boolean equals(Object obj) {
+        
+        boolean equals = false;
 
-				if (Objects.equals(clazz, pieceType.getClazz()))
-					equals = true;
-			}
-		}
+        if (obj != this) {
+            
+            if (obj instanceof PieceClass) {
+                
+                PieceClass pieceType = (PieceClass) obj;
 
-		return equals;
-	}
+                if (Objects.equals(clazz, pieceType.getClazz())) {
+                    equals = true;
+                }
+            }
+        }
+
+        return equals;
+    }
 }

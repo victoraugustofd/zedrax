@@ -20,55 +20,55 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 @EntityScan(basePackages = "${hibernate.entity-scan}")
 @EnableJpaRepositories(basePackages = "${hibernate.repositories-scan}")
 public class HibernateConfig {
-	
-	@Value("${hibernate.dialect}")
-	private String hibernateDialect;
 
-	@Value("${hibernate.generate-ddl}")
-	private String hibernateGenerateDdl;
+    @Value("${hibernate.dialect}")
+    private String hibernateDialect;
 
-	@Value("${hibernate.show-sql}")
-	private String hibernateShowSql;
+    @Value("${hibernate.generate-ddl}")
+    private String hibernateGenerateDdl;
 
-	@Value("${hibernate.jdbc.fetch-size}")
-	private String hibernateFetchSize;
+    @Value("${hibernate.show-sql}")
+    private String hibernateShowSql;
 
-	@Value("${hibernate.hbm2ddl.auto}")
-	private String hibernateHbm2ddlAuto;
+    @Value("${hibernate.jdbc.fetch-size}")
+    private String hibernateFetchSize;
 
-	@Value("${hibernate.entity-scan}")
-	private String hibernateEntityScan;
+    @Value("${hibernate.hbm2ddl.auto}")
+    private String hibernateHbm2ddlAuto;
 
-	@Value("${hibernate.persistence-unit}")
-	private String hibernatePersistenceUnit;
+    @Value("${hibernate.entity-scan}")
+    private String hibernateEntityScan;
 
-	@Autowired
-	private DataSource dataSource;
+    @Value("${hibernate.persistence-unit}")
+    private String hibernatePersistenceUnit;
 
-	@Bean(name = "jpaVendorAdapter")
-	public JpaVendorAdapter jpaVendorAdapter() {
-		
-		HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-		jpaVendorAdapter.setGenerateDdl(Boolean.parseBoolean(hibernateGenerateDdl));
-		jpaVendorAdapter.setShowSql(Boolean.parseBoolean(hibernateShowSql));
-		jpaVendorAdapter.setDatabasePlatform(hibernateDialect);
+    @Autowired
+    private DataSource dataSource;
 
-		return jpaVendorAdapter;
-	}
+    @Bean(name = "jpaVendorAdapter")
+    public JpaVendorAdapter jpaVendorAdapter() {
 
-	@Bean(name = "entityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-		
-		LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
-		lef.setDataSource(dataSource);
-		lef.setPackagesToScan(hibernateEntityScan);
-		lef.setJpaVendorAdapter(jpaVendorAdapter());
+        HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+        jpaVendorAdapter.setGenerateDdl(Boolean.parseBoolean(hibernateGenerateDdl));
+        jpaVendorAdapter.setShowSql(Boolean.parseBoolean(hibernateShowSql));
+        jpaVendorAdapter.setDatabasePlatform(hibernateDialect);
 
-		Properties hibernateProperties = new Properties();
-		hibernateProperties.setProperty("hibernate.jdbc.fetch-size", hibernateFetchSize);
-		hibernateProperties.setProperty("hibernate.hbm2ddl.auto", hibernateHbm2ddlAuto);
+        return jpaVendorAdapter;
+    }
 
-		lef.setJpaProperties(hibernateProperties);
-		return lef;
-	}
+    @Bean(name = "entityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+
+        LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
+        lef.setDataSource(dataSource);
+        lef.setPackagesToScan(hibernateEntityScan);
+        lef.setJpaVendorAdapter(jpaVendorAdapter());
+
+        Properties hibernateProperties = new Properties();
+        hibernateProperties.setProperty("hibernate.jdbc.fetch-size", hibernateFetchSize);
+        hibernateProperties.setProperty("hibernate.hbm2ddl.auto", hibernateHbm2ddlAuto);
+
+        lef.setJpaProperties(hibernateProperties);
+        return lef;
+    }
 }

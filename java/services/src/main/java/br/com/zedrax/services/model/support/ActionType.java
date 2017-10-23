@@ -20,53 +20,58 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "action_type", uniqueConstraints = @UniqueConstraint(name = "uk_action_type__type", columnNames = "type"))
 public class ActionType implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_action_type", nullable = false, insertable = false, updatable = false)
-	private Long idActionType;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "type", nullable = false)
-	@Length(max = 100)
-	private String type;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_action_type", nullable = false, insertable = false, updatable = false)
+    private Long idActionType;
 
-	public ActionType() {
-	}
-	
-	public ActionType(String type) {
-		setType(type);
-	}
-	
-	public String getType() {
-		return type;
-	}
+    @Column(name = "type", nullable = false)
+    @Length(max = 100)
+    private String type;
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public ActionType() {
+    }
 
-	public Long getIdActionType() {
-		return this.idActionType;
-	}
+    public ActionType(String type) {
+        setType(type);
+    }
 
-	public void setIdActionType(Long idActionType) {
-		this.idActionType = idActionType;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		boolean equals = false;
+    public String getType() {
+        return type;
+    }
 
-		if (obj != this) {
-			if (obj instanceof ActionType) {
-				ActionType actioType = (ActionType) obj;
+    public void setType(String type) {
+        this.type = type;
+    }
 
-				if (Objects.equals(type, actioType.getType()))
-					equals = true;
-			}
-		}
+    public Long getIdActionType() {
+        return this.idActionType;
+    }
 
-		return equals;
-	}
+    public void setIdActionType(Long idActionType) {
+        this.idActionType = idActionType;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        boolean equals = false;
+
+        if (obj != this) {
+
+            if (obj instanceof ActionType) {
+
+                ActionType actioType = (ActionType) obj;
+
+                if (Objects.equals(type, actioType.getType())) {
+                    equals = true;
+                }
+            }
+        }
+
+        return equals;
+    }
 }

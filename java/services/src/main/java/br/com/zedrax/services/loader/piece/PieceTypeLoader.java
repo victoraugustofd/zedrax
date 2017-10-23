@@ -24,67 +24,69 @@ import br.com.zedrax.services.repository.piece.PieceTypeRepository;
 @Order(value = 2)
 public class PieceTypeLoader implements ApplicationRunner {
 
-	@Value("${piece-type.archer}")
-	private String archer;
+    @Value("${piece-type.archer}")
+    private String archer;
 
-	@Value("${piece-type.warrior}")
-	private String warrior;
+    @Value("${piece-type.warrior}")
+    private String warrior;
 
-	@Value("${piece-type.ninja}")
-	private String ninja;
+    @Value("${piece-type.ninja}")
+    private String ninja;
 
-	@Value("${piece-type.tank}")
-	private String tank;
+    @Value("${piece-type.tank}")
+    private String tank;
 
-	@Value("${piece-type.rook}")
-	private String rook;
+    @Value("${piece-type.rook}")
+    private String rook;
 
-	@Value("${piece-type.knight}")
-	private String knight;
+    @Value("${piece-type.knight}")
+    private String knight;
 
-	@Value("${piece-type.bishop}")
-	private String bishop;
+    @Value("${piece-type.bishop}")
+    private String bishop;
 
-	@Value("${piece-type.king}")
-	private String king;
+    @Value("${piece-type.king}")
+    private String king;
 
-	@Value("${piece-type.queen}")
-	private String queen;
+    @Value("${piece-type.queen}")
+    private String queen;
 
-	@SuppressWarnings("unused")
-	private final static Logger logger = Logger.getLogger(PieceTypeLoader.class);
+    @SuppressWarnings("unused")
+    private final static Logger logger = Logger.getLogger(PieceTypeLoader.class);
 
-	@Autowired
-	private PieceTypeRepository pieceTypeRepository;
+    @Autowired
+    private PieceTypeRepository pieceTypeRepository;
 
-	@Autowired
-	private PieceClassRepository pieceClassRepository;
+    @Autowired
+    private PieceClassRepository pieceClassRepository;
 
-	@Autowired
-	private Environment environment;
+    @Autowired
+    private Environment environment;
 
-	public void run(ApplicationArguments args) {
-		List<PieceType> listFromDb = pieceTypeRepository.findAll();
-		List<PieceType> newList = new ArrayList<>();
+    public void run(ApplicationArguments args) {
 
-		String pawn = environment.getProperty("piece-class.pawn");
-		String elite = environment.getProperty("piece-class.elite");
+        List<PieceType> listFromDb = pieceTypeRepository.findAll();
+        List<PieceType> newList = new ArrayList<>();
 
-		Map<String, PieceClass> pieceTypeClasses = pieceClassRepository.findAll().stream()
-				.collect(Collectors.toMap(PieceClass::getClazz, Function.identity()));
+        String pawn  = environment.getProperty("piece-class.pawn");
+        String elite = environment.getProperty("piece-class.elite");
 
-		newList.add(new PieceType(archer, pieceTypeClasses.get(pawn)));
-		newList.add(new PieceType(warrior, pieceTypeClasses.get(pawn)));
-		newList.add(new PieceType(ninja, pieceTypeClasses.get(pawn)));
-		newList.add(new PieceType(tank, pieceTypeClasses.get(pawn)));
-		newList.add(new PieceType(rook, pieceTypeClasses.get(elite)));
-		newList.add(new PieceType(knight, pieceTypeClasses.get(elite)));
-		newList.add(new PieceType(bishop, pieceTypeClasses.get(elite)));
-		newList.add(new PieceType(king, pieceTypeClasses.get(elite)));
-		newList.add(new PieceType(queen, pieceTypeClasses.get(elite)));
+        Map<String, PieceClass> pieceTypeClasses = pieceClassRepository.findAll()
+                                                                       .stream()
+                                                                       .collect(Collectors.toMap(PieceClass::getClazz, Function.identity()));
 
-		newList.removeAll(listFromDb);
+        newList.add(new PieceType(archer, pieceTypeClasses.get(pawn)));
+        newList.add(new PieceType(warrior, pieceTypeClasses.get(pawn)));
+        newList.add(new PieceType(ninja, pieceTypeClasses.get(pawn)));
+        newList.add(new PieceType(tank, pieceTypeClasses.get(pawn)));
+        newList.add(new PieceType(rook, pieceTypeClasses.get(elite)));
+        newList.add(new PieceType(knight, pieceTypeClasses.get(elite)));
+        newList.add(new PieceType(bishop, pieceTypeClasses.get(elite)));
+        newList.add(new PieceType(king, pieceTypeClasses.get(elite)));
+        newList.add(new PieceType(queen, pieceTypeClasses.get(elite)));
 
-		pieceTypeRepository.save(newList);
-	}
+        newList.removeAll(listFromDb);
+
+        pieceTypeRepository.save(newList);
+    }
 }

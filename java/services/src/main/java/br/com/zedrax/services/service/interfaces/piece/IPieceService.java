@@ -6,6 +6,8 @@ import br.com.zedrax.services.model.piece.Piece;
 import br.com.zedrax.services.model.piece.PieceType;
 
 public interface IPieceService {
-	List<Piece> retrieveInitialData();
-	List<PieceType> retrievePieceTypeList();
+    
+    List<Piece> retrieveInitialData();
+
+    List<PieceType> retrievePieceTypeList();
 }

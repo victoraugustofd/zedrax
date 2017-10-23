@@ -17,27 +17,29 @@ import br.com.zedrax.services.repository.piece.PieceClassRepository;
 @Component("pieceClassLoader")
 @Order(value = 1)
 public class PieceClassLoader implements ApplicationRunner {
-	@Value("${piece-class.pawn}")
-	private String pawn;
 
-	@Value("${piece-class.elite}")
-	private String elite;
+    @Value("${piece-class.pawn}")
+    private String pawn;
 
-	@SuppressWarnings("unused")
-	private final static Logger logger = Logger.getLogger(PieceClassLoader.class);
+    @Value("${piece-class.elite}")
+    private String elite;
 
-	@Autowired
-	private PieceClassRepository repository;
+    @SuppressWarnings("unused")
+    private final static Logger logger = Logger.getLogger(PieceClassLoader.class);
 
-	public void run(ApplicationArguments args) {
-		List<PieceClass> listFromDb = repository.findAll();
-		List<PieceClass> newList = new ArrayList<>();
+    @Autowired
+    private PieceClassRepository repository;
 
-		newList.add(new PieceClass(pawn));
-		newList.add(new PieceClass(elite));
+    public void run(ApplicationArguments args) {
 
-		newList.removeAll(listFromDb);
+        List<PieceClass> listFromDb = repository.findAll();
+        List<PieceClass> newList = new ArrayList<>();
 
-		repository.save(newList);
-	}
+        newList.add(new PieceClass(pawn));
+        newList.add(new PieceClass(elite));
+
+        newList.removeAll(listFromDb);
+
+        repository.save(newList);
+    }
 }

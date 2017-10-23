@@ -26,69 +26,75 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "piece-type", uniqueConstraints = @UniqueConstraint(name = "uk_piece-type__type", columnNames = "type"))
 public class PieceType implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_piece-type", nullable = false, insertable = false, updatable = false)
-	private Long idPieceType;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "\"type\"", nullable = false)
-	@Length(max = 10)
-	private String type;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_piece-type", nullable = false, insertable = false, updatable = false)
+    private Long idPieceType;
 
-	@ManyToOne(targetEntity = PieceClass.class)
-	@JoinColumn(name = "id_piece-class", nullable = false, foreignKey = @ForeignKey(name = "fk_piece-type__piece-class"))
-	private PieceClass pieceClass;
+    @Column(name = "\"type\"", nullable = false)
+    @Length(max = 10)
+    private String type;
 
-	@OneToMany(mappedBy = "pieceType", targetEntity = Piece.class)
-	private List<Piece> piece;
+    @ManyToOne(targetEntity = PieceClass.class)
+    @JoinColumn(name = "id_piece-class", nullable = false, foreignKey = @ForeignKey(name = "fk_piece-type__piece-class"))
+    private PieceClass pieceClass;
 
-	public PieceType() {
-	}
+    @OneToMany(mappedBy = "pieceType", targetEntity = Piece.class)
+    private List<Piece> piece;
 
-	public PieceType(String type, PieceClass pieceClass) {
-		setType(type);
-		setPieceClass(pieceClass);
-	}
+    public PieceType() {
+    }
 
-	public Long getIdPieceType() {
-		return this.idPieceType;
-	}
+    public PieceType(String type, PieceClass pieceClass) {
+        
+        setType(type);
+        setPieceClass(pieceClass);
+    }
 
-	public void setIdPieceType(Long idPieceType) {
-		this.idPieceType = idPieceType;
-	}
+    public Long getIdPieceType() {
+        return this.idPieceType;
+    }
 
-	public String getType() {
-		return this.type;
-	}
+    public void setIdPieceType(Long idPieceType) {
+        this.idPieceType = idPieceType;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType() {
+        return this.type;
+    }
 
-	public PieceClass getPieceClass() {
-		return pieceClass;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setPieceClass(PieceClass pieceClass) {
-		this.pieceClass = pieceClass;
-	}
+    public PieceClass getPieceClass() {
+        return pieceClass;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		boolean equals = false;
+    public void setPieceClass(PieceClass pieceClass) {
+        this.pieceClass = pieceClass;
+    }
 
-		if (obj != this) {
-			if (obj instanceof PieceType) {
-				PieceType pieceType = (PieceType) obj;
+    @Override
+    public boolean equals(Object obj) {
 
-				if (Objects.equals(type, pieceType.getType()))
-					equals = true;
-			}
-		}
+        boolean equals = false;
 
-		return equals;
-	}
+        if (obj != this) {
+
+            if (obj instanceof PieceType) {
+
+                PieceType pieceType = (PieceType) obj;
+
+                if (Objects.equals(type, pieceType.getType())) {
+                    equals = true;
+                }
+            }
+        }
+
+        return equals;
+    }
 }

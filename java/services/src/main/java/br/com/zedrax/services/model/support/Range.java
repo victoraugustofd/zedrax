@@ -16,142 +16,143 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "\"range\"")
 public class Range implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_range", nullable = false, insertable = false, updatable = false)
-	private Long idRange;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "x", nullable = false)
-	private Integer x;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_range", nullable = false, insertable = false, updatable = false)
+    private Long idRange;
 
-	@Column(name = "y", nullable = false)
-	private Integer y;
+    @Column(name = "x", nullable = false)
+    private Integer x;
 
-	@Column(name = "top", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean top;
+    @Column(name = "y", nullable = false)
+    private Integer y;
 
-	@Column(name = "bottom", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean bottom;
+    @Column(name = "top", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean top;
 
-	@Column(name = "\"left\"", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean left;
+    @Column(name = "bottom", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean bottom;
 
-	@Column(name = "\"right\"", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean right;
+    @Column(name = "\"left\"", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean left;
 
-	@Column(name = "top_right", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean topRight;
+    @Column(name = "\"right\"", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean right;
 
-	@Column(name = "top_left", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean topLeft;
+    @Column(name = "top_right", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean topRight;
 
-	@Column(name = "bottom_right", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean bottomRight;
+    @Column(name = "top_left", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean topLeft;
 
-	@Column(name = "bottom_left", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean bottomLeft;
+    @Column(name = "bottom_right", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean bottomRight;
 
-	@Column(name = "l", nullable = false, columnDefinition = "BOOLEAN")
-	private Boolean l;
+    @Column(name = "bottom_left", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean bottomLeft;
 
-	public Range() {
-	}
+    @Column(name = "l", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean l;
 
-	public Long getIdRange() {
-		return idRange;
-	}
+    public Range() {
+    }
 
-	public void setIdRange(Long idRange) {
-		this.idRange = idRange;
-	}
+    public Long getIdRange() {
+        return idRange;
+    }
 
-	public Integer getX() {
-		return x;
-	}
+    public void setIdRange(Long idRange) {
+        this.idRange = idRange;
+    }
 
-	public void setX(Integer x) {
-		this.x = x;
-	}
+    public Integer getX() {
+        return x;
+    }
 
-	public Integer getY() {
-		return y;
-	}
+    public void setX(Integer x) {
+        this.x = x;
+    }
 
-	public void setY(Integer y) {
-		this.y = y;
-	}
+    public Integer getY() {
+        return y;
+    }
 
-	public Boolean isTop() {
-		return top;
-	}
+    public void setY(Integer y) {
+        this.y = y;
+    }
 
-	public void setTop(Boolean top) {
-		this.top = top;
-	}
+    public Boolean isTop() {
+        return top;
+    }
 
-	public Boolean isBottom() {
-		return bottom;
-	}
+    public void setTop(Boolean top) {
+        this.top = top;
+    }
 
-	public void setBottom(Boolean bottom) {
-		this.bottom = bottom;
-	}
+    public Boolean isBottom() {
+        return bottom;
+    }
 
-	public Boolean isLeft() {
-		return left;
-	}
+    public void setBottom(Boolean bottom) {
+        this.bottom = bottom;
+    }
 
-	public void setLeft(Boolean left) {
-		this.left = left;
-	}
+    public Boolean isLeft() {
+        return left;
+    }
 
-	public Boolean isRight() {
-		return right;
-	}
+    public void setLeft(Boolean left) {
+        this.left = left;
+    }
 
-	public void setRight(Boolean right) {
-		this.right = right;
-	}
+    public Boolean isRight() {
+        return right;
+    }
 
-	public Boolean isTopRight() {
-		return topRight;
-	}
+    public void setRight(Boolean right) {
+        this.right = right;
+    }
 
-	public void setTopRight(Boolean topRight) {
-		this.topRight = topRight;
-	}
+    public Boolean isTopRight() {
+        return topRight;
+    }
 
-	public Boolean isTopLeft() {
-		return topLeft;
-	}
+    public void setTopRight(Boolean topRight) {
+        this.topRight = topRight;
+    }
 
-	public void setTopLeft(Boolean topLeft) {
-		this.topLeft = topLeft;
-	}
+    public Boolean isTopLeft() {
+        return topLeft;
+    }
 
-	public Boolean isBottomRight() {
-		return bottomRight;
-	}
+    public void setTopLeft(Boolean topLeft) {
+        this.topLeft = topLeft;
+    }
 
-	public void setBottomRight(Boolean bottomRight) {
-		this.bottomRight = bottomRight;
-	}
+    public Boolean isBottomRight() {
+        return bottomRight;
+    }
 
-	public Boolean isBottomLeft() {
-		return bottomLeft;
-	}
+    public void setBottomRight(Boolean bottomRight) {
+        this.bottomRight = bottomRight;
+    }
 
-	public void setBottomLeft(Boolean bottomLeft) {
-		this.bottomLeft = bottomLeft;
-	}
+    public Boolean isBottomLeft() {
+        return bottomLeft;
+    }
 
-	public Boolean isL() {
-		return l;
-	}
+    public void setBottomLeft(Boolean bottomLeft) {
+        this.bottomLeft = bottomLeft;
+    }
 
-	public void setL(Boolean l) {
-		this.l = l;
-	}
+    public Boolean isL() {
+        return l;
+    }
+
+    public void setL(Boolean l) {
+        this.l = l;
+    }
 }

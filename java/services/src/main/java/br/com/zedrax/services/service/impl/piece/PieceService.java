@@ -15,22 +15,21 @@ import br.com.zedrax.services.service.interfaces.piece.IPieceService;
 
 @Service("pieceService")
 public class PieceService implements IPieceService {
-	
-	@Autowired
-	private PieceRepository pieceRepository;
-	
-	@Autowired
-	private PieceTypeRepository typeRepository;
-	
-	@Override
-	public List<Piece> retrieveInitialData() {
-		return pieceRepository.findAll();
-	}
-	
-	@Override
-	public List<PieceType> retrievePieceTypeList() {
-		Iterable<PieceType> list = typeRepository.findAll();
 
-		return Lists.newArrayList(list);
-	}
+    @Autowired
+    private PieceRepository pieceRepository;
+
+    @Autowired
+    private PieceTypeRepository typeRepository;
+
+    @Override
+    public List<Piece> retrieveInitialData() {
+        return pieceRepository.findAll();
+    }
+
+    @Override
+    public List<PieceType> retrievePieceTypeList() {
+
+        return typeRepository.findAll();
+    }
 }

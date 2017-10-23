@@ -19,22 +19,24 @@ import br.com.zedrax.services.vo.settings.SettingsGroupVo;
 @RequestMapping(value = "/settings", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class SettingsController {
 
-	@Autowired
-	private ISettingsService service;
+    @Autowired
+    private ISettingsService service;
 
-	@Autowired
-	private ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper modelMapper;
 
-	@RequestMapping(value = "/group", method = RequestMethod.GET)
-	@ResponseBody
-	public List<SettingsGroupVo> retrieveSettingsGroup() {
-		return service.findAllGroups()
-				.stream()
-				.map(group -> convertEntityToVo(group))
-				.collect(Collectors.toList());
-	}
+    @RequestMapping(value = "/group", method = RequestMethod.GET)
+    @ResponseBody
+    public List<SettingsGroupVo> retrieveSettingsGroup() {
 
-	private SettingsGroupVo convertEntityToVo(SettingsGroup entity) {
-		return modelMapper.map(entity, SettingsGroupVo.class);
-	}
+        return service.findAllGroups()
+                      .stream()
+                      .map(group -> convertEntityToVo(group))
+                      .collect(Collectors.toList());
+    }
+
+    private SettingsGroupVo convertEntityToVo(SettingsGroup entity) {
+        
+        return modelMapper.map(entity, SettingsGroupVo.class);
+    }
 }

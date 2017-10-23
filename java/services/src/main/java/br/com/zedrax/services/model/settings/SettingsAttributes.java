@@ -23,79 +23,85 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "settings_attributes", uniqueConstraints = @UniqueConstraint(name = "uk_settings_attributes__attribute", columnNames = "attribute"))
 public class SettingsAttributes implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_settings_attributes", nullable = false, insertable = false, updatable = false)
-	private Long idSettingsAttributes;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "attribute", nullable = false)
-	@Length(max = 45)
-	private String attribute;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_settings_attributes", nullable = false, insertable = false, updatable = false)
+    private Long idSettingsAttributes;
 
-	@Column(name = "default-value", nullable = false)
-	@Length(max = 45)
-	private String defaultValue;
+    @Column(name = "attribute", nullable = false)
+    @Length(max = 45)
+    private String attribute;
 
-	@ManyToOne(targetEntity = SettingsGroup.class)
-	@JoinColumn(name = "id_settings_group", nullable = false, foreignKey = @ForeignKey(name = "fk_settings_attribute__settings_group"))
-	private SettingsGroup settingsGroup;
+    @Column(name = "default-value", nullable = false)
+    @Length(max = 45)
+    private String defaultValue;
 
-	public SettingsAttributes() {
-	}
+    @ManyToOne(targetEntity = SettingsGroup.class)
+    @JoinColumn(name = "id_settings_group", nullable = false, foreignKey = @ForeignKey(name = "fk_settings_attribute__settings_group"))
+    private SettingsGroup settingsGroup;
 
-	public SettingsAttributes(String attribute, String defaultValue, SettingsGroup settingsGroup) {
-		setAttribute(attribute);
-		setDefaultValue(defaultValue);
-		setSettingsGroup(settingsGroup);
-	}
+    public SettingsAttributes() {
+    }
 
-	public Long getIdSettingsAttributes() {
-		return idSettingsAttributes;
-	}
+    public SettingsAttributes(String attribute, String defaultValue, SettingsGroup settingsGroup) {
 
-	public void setIdSettingsAttributes(Long idSettingsAttributes) {
-		this.idSettingsAttributes = idSettingsAttributes;
-	}
+        setAttribute(attribute);
+        setDefaultValue(defaultValue);
+        setSettingsGroup(settingsGroup);
+    }
 
-	public String getAttribute() {
-		return attribute;
-	}
+    public Long getIdSettingsAttributes() {
+        return idSettingsAttributes;
+    }
 
-	public void setAttribute(String attribute) {
-		this.attribute = attribute;
-	}
+    public void setIdSettingsAttributes(Long idSettingsAttributes) {
+        this.idSettingsAttributes = idSettingsAttributes;
+    }
 
-	public String getDefaultValue() {
-		return defaultValue;
-	}
+    public String getAttribute() {
+        return attribute;
+    }
 
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
 
-	public SettingsGroup getSettingsGroup() {
-		return settingsGroup;
-	}
+    public String getDefaultValue() {
+        return defaultValue;
+    }
 
-	public void setSettingsGroup(SettingsGroup settingsGroup) {
-		this.settingsGroup = settingsGroup;
-	}
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		boolean equals = false;
+    public SettingsGroup getSettingsGroup() {
+        return settingsGroup;
+    }
 
-		if (obj != this) {
-			if (obj instanceof SettingsAttributes) {
-				SettingsAttributes settingsAttributes = (SettingsAttributes) obj;
+    public void setSettingsGroup(SettingsGroup settingsGroup) {
+        this.settingsGroup = settingsGroup;
+    }
 
-				if (Objects.equals(attribute, settingsAttributes.getAttribute()))
-					equals = true;
-			}
-		}
+    @Override
+    public boolean equals(Object obj) {
+        
+        boolean equals = false;
 
-		return equals;
-	}
+        if (obj != this) {
+            
+            if (obj instanceof SettingsAttributes) {
+                
+                SettingsAttributes settingsAttributes = (SettingsAttributes) obj;
+
+                if (Objects.equals(attribute, settingsAttributes.getAttribute())) {
+                    equals = true;
+                }
+            }
+        }
+
+        return equals;
+    }
 }
