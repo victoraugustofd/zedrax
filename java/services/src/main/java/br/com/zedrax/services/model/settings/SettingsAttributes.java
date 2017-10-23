@@ -34,7 +34,7 @@ public class SettingsAttributes implements Serializable {
 	@Length(max = 45)
 	private String attribute;
 
-	@Column(name = "default_value", nullable = false)
+	@Column(name = "default-value", nullable = false)
 	@Length(max = 45)
 	private String defaultValue;
 

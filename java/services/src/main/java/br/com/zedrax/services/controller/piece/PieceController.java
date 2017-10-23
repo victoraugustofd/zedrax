@@ -28,12 +28,14 @@ public class PieceController {
 	@RequestMapping(value = "/retrieve-initial-data", method = RequestMethod.GET)
 	@ResponseBody
 	public List<PieceVo> retrievePiecesInitialData() {
+		
 		return retrievePiecesInitialDataGeneric();
 	}
 	
 	@RequestMapping(value = "/retrieve-initial-data-unreal", method = RequestMethod.GET)
 	@ResponseBody
 	public DataVo<PieceVo> retrievePiecesInitialDataUnreal() {
+		
 		DataVo<PieceVo> data = new DataVo<>();
 		data.setData(retrievePiecesInitialDataGeneric());
 		
@@ -41,6 +43,7 @@ public class PieceController {
 	}
 	
 	public List<PieceVo> retrievePiecesInitialDataGeneric() {
+		
 		return service.retrieveInitialData()
 				.stream()
 				.map(piece -> convertEntityToVo(piece))
@@ -48,6 +51,7 @@ public class PieceController {
 	}
 	
 	private PieceVo convertEntityToVo(Piece entity) {
+		
 		return modelMapper.map(entity, PieceVo.class);
 	}
 }

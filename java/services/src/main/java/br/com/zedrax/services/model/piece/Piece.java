@@ -47,7 +47,7 @@ public class Piece implements Serializable {
 	private Double xpToNextLevel;
 
 	@ManyToOne(targetEntity = PieceType.class)
-	@JoinColumn(name = "id_piece_type", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__piece_type"))
+	@JoinColumn(name = "id_piece-type", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__piece-type"))
 	private PieceType pieceType;
 
 	@ManyToOne(targetEntity = Action.class)

@@ -9,20 +9,20 @@ spring:
 # Hibernate
 hibernate:
   dialect: org.hibernate.dialect.MySQL57Dialect
-  generate_ddl: true
-  show_sql: true
+  generate-ddl: true
+  show-sql: true
   jdbc:
-    fetch_size: 100
+    fetch-size: 100
   hbm2ddl:
     auto: update
-  entity_scan: br.com.zedrax.services.model
-  repositories_scan: br.com.zedrax.services.repository
-  persistence_unit: default
+  entity-scan: br.com.zedrax.services.model
+  repositories-scan: br.com.zedrax.services.repository
+  persistence-unit: default
 
 # Data for Loaders
 
 # Piece Types
-piece_type:
+piece-type:
   king: KING
   queen: QUEEN
   rook: ROOK
@@ -34,7 +34,7 @@ piece_type:
   ninja: NINJA
 
 # Piece Type Classes
-piece_class:
+piece-class:
   pawn: PAWN
   elite: ELITE
 
@@ -47,17 +47,17 @@ settings:
     audio:
       music:
         description: MUSIC
-        default_value: 10
+        default-value: 10
       sfx:
         description: SFX
-        default_value: 10
+        default-value: 10
       speech:
         description: SPEECH
-        default_value: 10
+        default-value: 10
     display:
       resolution:
         description: RESOLUTION
-        default_value: 10
+        default-value: 10
 
 # Action
 action:

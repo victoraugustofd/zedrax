@@ -17,10 +17,10 @@ import br.com.zedrax.services.repository.piece.PieceClassRepository;
 @Component("pieceClassLoader")
 @Order(value = 1)
 public class PieceClassLoader implements ApplicationRunner {
-	@Value("${piece_class.pawn}")
+	@Value("${piece-class.pawn}")
 	private String pawn;
 
-	@Value("${piece_class.elite}")
+	@Value("${piece-class.elite}")
 	private String elite;
 
 	@SuppressWarnings("unused")

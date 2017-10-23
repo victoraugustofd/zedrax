@@ -7,7 +7,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -17,28 +17,29 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 @Configuration("hibernateConfig")
 @EnableAutoConfiguration
-@EntityScan(basePackages = "${hibernate.entity_scan}")
-@EnableJpaRepositories(basePackages = "${hibernate.repositories_scan}")
+@EntityScan(basePackages = "${hibernate.entity-scan}")
+@EnableJpaRepositories(basePackages = "${hibernate.repositories-scan}")
 public class HibernateConfig {
+	
 	@Value("${hibernate.dialect}")
 	private String hibernateDialect;
 
-	@Value("${hibernate.generate_ddl}")
+	@Value("${hibernate.generate-ddl}")
 	private String hibernateGenerateDdl;
 
-	@Value("${hibernate.show_sql}")
+	@Value("${hibernate.show-sql}")
 	private String hibernateShowSql;
 
-	@Value("${hibernate.jdbc.fetch_size}")
+	@Value("${hibernate.jdbc.fetch-size}")
 	private String hibernateFetchSize;
 
 	@Value("${hibernate.hbm2ddl.auto}")
 	private String hibernateHbm2ddlAuto;
 
-	@Value("${hibernate.entity_scan}")
+	@Value("${hibernate.entity-scan}")
 	private String hibernateEntityScan;
 
-	@Value("${hibernate.persistence_unit}")
+	@Value("${hibernate.persistence-unit}")
 	private String hibernatePersistenceUnit;
 
 	@Autowired
@@ -46,6 +47,7 @@ public class HibernateConfig {
 
 	@Bean(name = "jpaVendorAdapter")
 	public JpaVendorAdapter jpaVendorAdapter() {
+		
 		HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
 		jpaVendorAdapter.setGenerateDdl(Boolean.parseBoolean(hibernateGenerateDdl));
 		jpaVendorAdapter.setShowSql(Boolean.parseBoolean(hibernateShowSql));
@@ -56,13 +58,14 @@ public class HibernateConfig {
 
 	@Bean(name = "entityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		
 		LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
 		lef.setDataSource(dataSource);
 		lef.setPackagesToScan(hibernateEntityScan);
 		lef.setJpaVendorAdapter(jpaVendorAdapter());
 
 		Properties hibernateProperties = new Properties();
-		hibernateProperties.setProperty("hibernate.jdbc.fetch_size", hibernateFetchSize);
+		hibernateProperties.setProperty("hibernate.jdbc.fetch-size", hibernateFetchSize);
 		hibernateProperties.setProperty("hibernate.hbm2ddl.auto", hibernateHbm2ddlAuto);
 
 		lef.setJpaProperties(hibernateProperties);

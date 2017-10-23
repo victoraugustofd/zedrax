@@ -24,31 +24,31 @@ import br.com.zedrax.services.repository.piece.PieceTypeRepository;
 @Order(value = 2)
 public class PieceTypeLoader implements ApplicationRunner {
 
-	@Value("${piece_type.archer}")
+	@Value("${piece-type.archer}")
 	private String archer;
 
-	@Value("${piece_type.warrior}")
+	@Value("${piece-type.warrior}")
 	private String warrior;
 
-	@Value("${piece_type.ninja}")
+	@Value("${piece-type.ninja}")
 	private String ninja;
 
-	@Value("${piece_type.tank}")
+	@Value("${piece-type.tank}")
 	private String tank;
 
-	@Value("${piece_type.rook}")
+	@Value("${piece-type.rook}")
 	private String rook;
 
-	@Value("${piece_type.knight}")
+	@Value("${piece-type.knight}")
 	private String knight;
 
-	@Value("${piece_type.bishop}")
+	@Value("${piece-type.bishop}")
 	private String bishop;
 
-	@Value("${piece_type.king}")
+	@Value("${piece-type.king}")
 	private String king;
 
-	@Value("${piece_type.queen}")
+	@Value("${piece-type.queen}")
 	private String queen;
 
 	@SuppressWarnings("unused")
@@ -67,8 +67,8 @@ public class PieceTypeLoader implements ApplicationRunner {
 		List<PieceType> listFromDb = pieceTypeRepository.findAll();
 		List<PieceType> newList = new ArrayList<>();
 
-		String pawn = environment.getProperty("piece_class.pawn");
-		String elite = environment.getProperty("piece_class.elite");
+		String pawn = environment.getProperty("piece-class.pawn");
+		String elite = environment.getProperty("piece-class.elite");
 
 		Map<String, PieceClass> pieceTypeClasses = pieceClassRepository.findAll().stream()
 				.collect(Collectors.toMap(PieceClass::getClazz, Function.identity()));

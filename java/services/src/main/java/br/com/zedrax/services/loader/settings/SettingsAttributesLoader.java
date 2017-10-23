@@ -35,16 +35,16 @@ public class SettingsAttributesLoader implements ApplicationRunner {
 	@Value("${settings.attribute.display.resolution.description}")
 	private String resolution;
 
-	@Value("${settings.attribute.audio.music.default_value}")
+	@Value("${settings.attribute.audio.music.default-value}")
 	private String musicDefaultValue;
 
-	@Value("${settings.attribute.audio.sfx.default_value}")
+	@Value("${settings.attribute.audio.sfx.default-value}")
 	private String sfxDefaultValue;
 
-	@Value("${settings.attribute.audio.speech.default_value}")
+	@Value("${settings.attribute.audio.speech.default-value}")
 	private String speechDefaultValue;
 
-	@Value("${settings.attribute.display.resolution.default_value}")
+	@Value("${settings.attribute.display.resolution.default-value}")
 	private String resolutionDefaultValue;
 
 	@SuppressWarnings("unused")
