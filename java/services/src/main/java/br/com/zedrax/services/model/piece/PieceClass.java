@@ -17,18 +17,18 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.validator.constraints.Length;
 
 /**
- * The persistent class for the "piece-class" database table.
+ * The persistent class for the "piece_class" database table.
  * 
  */
 @Entity
-@Table(name = "piece-class", uniqueConstraints = @UniqueConstraint(name = "uk_piece-class__class", columnNames = "class"))
+@Table(name = "piece_class", uniqueConstraints = @UniqueConstraint(name = "uk_piece_class__class", columnNames = "class"))
 public class PieceClass implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_piece-class", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_piece_class", nullable = false, insertable = false, updatable = false)
     private Long idPieceClass;
 
     @Column(name = "class", nullable = false)

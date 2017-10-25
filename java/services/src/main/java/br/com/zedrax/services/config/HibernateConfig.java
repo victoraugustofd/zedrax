@@ -65,7 +65,7 @@ public class HibernateConfig {
         lef.setJpaVendorAdapter(jpaVendorAdapter());
 
         Properties hibernateProperties = new Properties();
-        hibernateProperties.setProperty("hibernate.jdbc.fetch-size", hibernateFetchSize);
+        hibernateProperties.setProperty("hibernate.jdbc.fetch_size", hibernateFetchSize);
         hibernateProperties.setProperty("hibernate.hbm2ddl.auto", hibernateHbm2ddlAuto);
 
         lef.setJpaProperties(hibernateProperties);

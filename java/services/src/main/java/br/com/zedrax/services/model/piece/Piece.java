@@ -48,15 +48,15 @@ public class Piece implements Serializable {
     private Double xpToNextLevel;
 
     @ManyToOne(targetEntity = PieceType.class)
-    @JoinColumn(name = "id_piece-type", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__piece-type"))
+    @JoinColumn(name = "id_piece_type", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__piece_type"))
     private PieceType pieceType;
 
     @ManyToOne(targetEntity = Action.class)
-    @JoinColumn(name = "id_action_move", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__action__move"))
+    @JoinColumn(name = "id_action_move", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__action_move"))
     private Action move;
 
     @ManyToOne(targetEntity = Action.class)
-    @JoinColumn(name = "id_action_atk", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__action_attack"))
+    @JoinColumn(name = "id_action_attack", nullable = false, foreignKey = @ForeignKey(name = "fk_piece__action_attack"))
     private Action attack;
 
     public Piece() {

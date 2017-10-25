@@ -20,18 +20,18 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.validator.constraints.Length;
 
 /**
- * The persistent class for the "piece-type" database table.
+ * The persistent class for the "piece_type" database table.
  * 
  */
 @Entity
-@Table(name = "piece-type", uniqueConstraints = @UniqueConstraint(name = "uk_piece-type__type", columnNames = "type"))
+@Table(name = "piece_type", uniqueConstraints = @UniqueConstraint(name = "uk_piece_type__type", columnNames = "type"))
 public class PieceType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_piece-type", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_piece_type", nullable = false, insertable = false, updatable = false)
     private Long idPieceType;
 
     @Column(name = "\"type\"", nullable = false)
@@ -39,7 +39,7 @@ public class PieceType implements Serializable {
     private String type;
 
     @ManyToOne(targetEntity = PieceClass.class)
-    @JoinColumn(name = "id_piece-class", nullable = false, foreignKey = @ForeignKey(name = "fk_piece-type__piece-class"))
+    @JoinColumn(name = "id_piece_class", nullable = false, foreignKey = @ForeignKey(name = "fk_piece_type__piece_class"))
     private PieceClass pieceClass;
 
     @OneToMany(mappedBy = "pieceType", targetEntity = Piece.class)
