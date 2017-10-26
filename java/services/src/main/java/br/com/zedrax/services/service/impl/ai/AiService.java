@@ -2,6 +2,7 @@ package br.com.zedrax.services.service.impl.ai;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -78,17 +79,13 @@ public class AiService implements IAiService {
     private static final Integer INDEX_ATTACK_BOTTOM_RIGHT  = INDEX++;
     private static final Integer INDEX_ATTACK_L             = INDEX++;
 
-    private static final Integer WEIGHT_KILLED                      = -4;
-    private static final Integer WEIGHT_ATTACKED_TO_ALMOST_DEATH    = -3;
-    private static final Integer WEIGHT_ATTACKED_TO_HALF_HP         = -2;
-    private static final Integer WEIGHT_ATTACKED                    = -1;
-    private static final Integer WEIGHT_NEUTRAL                     =  0;
-    private static final Integer WEIGHT_MOVE                        =  1;
-    private static final Integer WEIGHT_RUN_AWAY                    =  2;
-    private static final Integer WEIGHT_ATTACK                      =  2;
-    private static final Integer WEIGHT_HALF_KILL                   =  3;
-    private static final Integer WEIGHT_ALMOST_KILL                 =  4;
-    private static final Integer WEIGHT_KILL                        =  5;
+    private static final Integer WEIGHT_NEUTRAL     =  0;
+    private static final Integer WEIGHT_MOVE        =  1;
+    private static final Integer WEIGHT_ATTACK      =  1;
+    private static final Integer WEIGHT_RUN_AWAY    =  2;
+    private static final Integer WEIGHT_HALF_HP     =  2;
+    private static final Integer WEIGHT_ALMOST_DEAD =  3;
+    private static final Integer WEIGHT_KILL        =  4;
 
     private static final Integer WEIGHT_PAWN  = 1;
     private static final Integer WEIGHT_ELITE = 2;
@@ -108,6 +105,8 @@ public class AiService implements IAiService {
 
     @Autowired
     private Environment environment;
+    
+    private List<AiData> piecesOnBoard;
 
     @Override
     public List<AiActionUnreal> process(String unrealData) {
@@ -218,7 +217,9 @@ public class AiService implements IAiService {
 
             aiData.add(data);
         }
-
+        
+        setPiecesOnBoard(aiData);
+        
         return aiData;
     }
 
@@ -270,6 +271,10 @@ public class AiService implements IAiService {
     public List<AiAction> processWithJava(List<AiData> aiData) {
 
         List<AiAction> aiActions = new ArrayList<>();
+        Iterator<AiAction> aiActionIterator;
+        Iterator<AiData> aiIterator;
+        AiAction aiAction;
+        AiData allyAttackingEnemy;
         
         boolean isTargetPosition = false;
         boolean attacked;
@@ -278,15 +283,16 @@ public class AiService implements IAiService {
 
         List<AiData> allies = separateAlliesFromMatrix(aiData);
         List<AiData> enemies = separateEnemiesFromMatrix(aiData);
-        List<AiData> alliesAttackingEnemyCurrentTurn;
-        List<AiData> alliesAttackingEnemyNextTurn;
+        List<AiData> alliesAttackingEnemyOnCurrentTurn;
+        List<AiData> alliesAttackingEnemyOnNextTurn;
 
         Integer weight;
         Integer enemyWeight;
         Integer allyWeight;
+        Double allyRemainingHp;
+        Double allyHpMax;
         Double enemyRemainingHp;
         Double enemyHpMax;
-        Double enemyRemainingHpPercentage;
 
         PieceVo enemyPiece;
         PieceTypeVo enemyType;
@@ -312,12 +318,10 @@ public class AiService implements IAiService {
         
         for (AiData enemy : enemies) {
 
-            AiAction aiAction;
-            
-            enemyPiece = idVersusNamePiece.get((long) enemy.getPieceType());
-            enemyType = enemyPiece.getPieceType();
-            enemyClass = enemyType.getPieceClass();
-            enemyWeight = KING.equalsIgnoreCase(enemyType.getType()) ? WEIGHT_KING : ELITE.equals(enemyClass.getClazz()) ? WEIGHT_ELITE : WEIGHT_PAWN;
+            enemyPiece  = idVersusNamePiece.get((long) enemy.getPieceType());
+            enemyType   = enemyPiece.getPieceType();
+            enemyClass  = enemyType.getPieceClass();
+            enemyWeight = weight(enemyType, enemyClass);
             
             enemyRemainingHp = enemy.getHp();
             enemyHpMax = enemy.getHpMax();
@@ -341,19 +345,21 @@ public class AiService implements IAiService {
                     aiAction.setxPositionTo(Integer.parseInt(positionToMove.substring(0, 1)));
                     aiAction.setyPositionTo(Integer.parseInt(positionToMove.substring(1, 2)));
                     
-                    alliesAttackingEnemyCurrentTurn = allyPositionsToAttack.entrySet()
+                    alliesAttackingEnemyOnCurrentTurn = allyPositionsToAttack.entrySet()
                                                                            .stream()
                                                                            .filter(entry -> entry.getValue().contains(position(enemy.getxPosition(), enemy.getyPosition())))
                                                                            .map(Map.Entry::getKey)
                                                                            .collect(Collectors.toList());
                     
-                    alliesAttackingEnemyNextTurn = allyPositionsToAttack.entrySet()
-                                                                        .stream()
-                                                                        .filter(entry -> entry.getValue().contains(positionToMove))
-                                                                        .map(Map.Entry::getKey)
-                                                                        .collect(Collectors.toList());
+                    alliesAttackingEnemyOnNextTurn = allyPositionsToAttack.entrySet()
+                                                                          .stream()
+                                                                          .filter(entry -> entry.getValue().contains(positionToMove))
+                                                                          .map(Map.Entry::getKey)
+                                                                          .collect(Collectors.toList());
                     
-                    for (AiData allyAttackingEnemy : alliesAttackingEnemyNextTurn) {
+                    aiIterator = alliesAttackingEnemyOnNextTurn.iterator();
+                    
+                    for (allyAttackingEnemy = aiIterator.next(); aiIterator.hasNext() && enemyRemainingHp > 0; aiIterator.next()) {
                         
                         if(allyAttackingEnemy.getAtk() > enemy.getDef()) {
                             
@@ -362,35 +368,17 @@ public class AiService implements IAiService {
                         }
                     }
                     
+                    weight = WEIGHT_MOVE;
+                    
                     if(!attacked) {
                         
-                        if(null != alliesAttackingEnemyCurrentTurn && !alliesAttackingEnemyCurrentTurn.isEmpty()) {
+                        if(null != alliesAttackingEnemyOnCurrentTurn && !alliesAttackingEnemyOnCurrentTurn.isEmpty()) {
                             
                             weight = WEIGHT_RUN_AWAY;
-                        } else {
-                            
-                            weight = WEIGHT_MOVE;
                         }
                     } else {
                         
-                        if(enemyRemainingHp > 0) {
-                            
-                            enemyRemainingHpPercentage = (enemyRemainingHp / enemyHpMax) * 100;
-                            
-                            if(enemyRemainingHpPercentage <= 20) {
-                                
-                                weight = WEIGHT_ATTACKED_TO_ALMOST_DEATH;
-                            } else if (enemyRemainingHpPercentage > 20 && enemyRemainingHpPercentage <= 50) {
-                                
-                                weight = WEIGHT_ATTACKED_TO_HALF_HP;
-                            } else {
-                                
-                                weight = WEIGHT_ATTACKED;
-                            }
-                        } else {
-                            
-                            weight = WEIGHT_KILLED;
-                        }
+                        weight = weightForAttacks(enemyRemainingHp, enemyHpMax) * -1;
                     }
                     
                     weight *= enemyWeight;
@@ -414,15 +402,25 @@ public class AiService implements IAiService {
                                  .filter(allyPieceAux -> (position(allyPieceAux.getxPosition(), allyPieceAux.getyPosition()).equals(positionToAttack)))
                                  .findFirst().get();
 
-                    allyPiece = idVersusNamePiece.get((long) ally.getPieceType());
-                    allyType = allyPiece.getPieceType();
-                    allyClass = allyType.getPieceClass();
-                    allyWeight = environment.getProperty("piece-class.pawn").equals(allyClass.getClazz()) ? WEIGHT_PAWN : WEIGHT_ELITE;
-
+                    allyPiece  = idVersusNamePiece.get((long) ally.getPieceType());
+                    allyType   = allyPiece.getPieceType();
+                    allyClass  = allyType.getPieceClass();
+                    allyWeight = weight(allyType, allyClass);
+                    
+                    allyRemainingHp = ally.getHp();
+                    allyHpMax = ally.getHpMax();
+                    
                     aiAction.setxPositionTo(ally.getxPosition());
                     aiAction.setyPositionTo(ally.getyPosition());
                     
-                    weight = WEIGHT_ATTACK;
+                    weight = WEIGHT_NEUTRAL;
+                    
+                    if(enemy.getAtk() > ally.getDef()) {
+                        
+                        allyRemainingHp -= (enemy.getAtk() - ally.getDef());
+                        
+                        weight = weightForAttacks(allyRemainingHp, allyHpMax);
+                    }
                     
                     weight *= allyWeight;
                     
@@ -434,8 +432,10 @@ public class AiService implements IAiService {
         }
 
         while (remainingMana > 0) {
-
-            for (AiAction aiAction : aiActions) {
+            
+            aiActionIterator = aiActions.iterator();
+            
+            for (aiAction = aiActionIterator.next(); aiActionIterator.hasNext(); aiActionIterator.next()) {
                 
                 remainingMana -= aiAction.getManaCost();
             }
@@ -475,26 +475,34 @@ public class AiService implements IAiService {
 
     private List<String> positionsToMove(AiData piece, List<AiData> aiData) {
 
-        List<String> positions;
-        List<String> invalidPositionsToMove = aiData.stream()
-                                                    .map(pieceAux -> position(pieceAux.getxPosition(), pieceAux.getyPosition()))
-                                                    .collect(Collectors.toList());
-
-        positions = positionsToDoSomething(piece, true);
-        positions.removeAll(invalidPositionsToMove);
-
+        List<String> positions = new ArrayList<>();
+        
+        if(canMove(piece)) {
+            
+            List<String> invalidPositionsToMove = aiData.stream()
+                    .map(pieceAux -> position(pieceAux.getxPosition(), pieceAux.getyPosition()))
+                    .collect(Collectors.toList());
+            
+            positions.addAll(positionsToDoSomething(piece, true));
+            positions.removeAll(invalidPositionsToMove);
+        }
+        
         return positions;
     }
 
     private List<String> positionsToAttack(AiData piece, List<AiData> enemiesOfPiece) {
 
-        List<String> positions;
-        List<String> enemiesOfPiecePositions = enemiesOfPiece.stream()
-                                                             .map(enemyOfPiece -> position(enemyOfPiece.getxPosition(), enemyOfPiece.getyPosition()))
-                                                             .collect(Collectors.toList());
-
-        positions = positionsToDoSomething(piece, false);
-        positions.retainAll(enemiesOfPiecePositions);
+        List<String> positions = new ArrayList<>();
+        
+        if(canAttack(piece)) {
+            
+            List<String> enemiesOfPiecePositions = enemiesOfPiece.stream()
+                    .map(enemyOfPiece -> position(enemyOfPiece.getxPosition(), enemyOfPiece.getyPosition()))
+                    .collect(Collectors.toList());
+            
+            positions.addAll(positionsToDoSomething(piece, false));
+            positions.retainAll(enemiesOfPiecePositions);
+        }
 
         return positions;
     }
@@ -686,6 +694,57 @@ public class AiService implements IAiService {
         return positions;
     }
 
+    private Integer weight(PieceTypeVo type, PieceClassVo clazz) {
+        
+        return KING.equalsIgnoreCase(type.getType()) ? WEIGHT_KING : ELITE.equals(clazz.getClazz()) ? WEIGHT_ELITE : WEIGHT_PAWN;
+    }
+    
+    private Integer weightForAttacks(Double remainingHp, Double hpMax) {
+        
+        Integer weight;
+        Double remainingHpPercentage;
+        
+        if(remainingHp > 0) {
+            
+            remainingHpPercentage = (remainingHp / hpMax) * 100;
+            
+            if(remainingHpPercentage <= 20) {
+                
+                weight = WEIGHT_ALMOST_DEAD;
+            } else if (remainingHpPercentage > 20 && remainingHpPercentage <= 50) {
+                
+                weight = WEIGHT_HALF_HP;
+            } else {
+                
+                weight = WEIGHT_ATTACK;
+            }
+        } else {
+            
+            weight = WEIGHT_KILL;
+        }
+        
+        return weight;
+    }
+    
+    private boolean canMove(AiData piece) {
+        
+        return canDoSomething(piece, true);
+    }
+    
+    private boolean canAttack(AiData piece) {
+        
+        return canDoSomething(piece, false);
+    }
+    
+    private boolean canDoSomething(AiData piece, boolean isMove) {
+        
+        boolean canDoSomething = false;
+        
+        
+        
+        return canDoSomething;
+    }
+    
     private String position(Integer x, Integer y) {
 
         return String.valueOf(x) + String.valueOf(y);
@@ -705,7 +764,17 @@ public class AiService implements IAiService {
 
         return modelMapper.map(pieceEntity, PieceVo.class);
     }
-    
+
+    public List<AiData> getPiecesOnBoard() {
+        
+        return piecesOnBoard;
+    }
+
+    public void setPiecesOnBoard(List<AiData> piecesOnBoard) {
+        
+        this.piecesOnBoard = piecesOnBoard;
+    }
+
     /*private void fillBoard() {
 
         if (null == this.board) {
