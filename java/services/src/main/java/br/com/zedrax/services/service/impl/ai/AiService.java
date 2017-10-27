@@ -2,7 +2,6 @@ package br.com.zedrax.services.service.impl.ai;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -271,12 +270,8 @@ public class AiService implements IAiService {
     public List<AiAction> processWithJava(List<AiData> aiData) {
 
         List<AiAction> aiActions = new ArrayList<>();
-        Iterator<AiAction> aiActionIterator;
-        Iterator<AiData> aiIterator;
-        AiAction aiAction;
-        AiData allyAttackingEnemy;
+        List<AiAction> aiSelectedActions = new ArrayList<>();
         
-        boolean isTargetPosition = false;
         boolean attacked;
         
         Integer remainingMana = Integer.parseInt(environment.getProperty("game.turn.initial-mana"));
@@ -305,6 +300,7 @@ public class AiService implements IAiService {
         List<String> positionsToMove;
         List<String> positionsToAttack;
         Map<AiData, List<String>> allyPositionsToAttack = new HashMap<>();
+        Map<Integer, List<AiAction>> aiActionsMap;
 
         Map<Long, PieceVo> idVersusNamePiece = pieceRepository.findAll()
                                                               .stream()
@@ -335,7 +331,7 @@ public class AiService implements IAiService {
                 
                 for (String positionToMove : positionsToMove) {
 
-                    aiAction = new AiAction();
+                    AiAction aiAction = new AiAction();
 
                     aiAction.setIdPiece(enemy.getPieceType());
                     aiAction.setIdAction(ID_MOVE);
@@ -357,9 +353,7 @@ public class AiService implements IAiService {
                                                                           .map(Map.Entry::getKey)
                                                                           .collect(Collectors.toList());
                     
-                    aiIterator = alliesAttackingEnemyOnNextTurn.iterator();
-                    
-                    for (allyAttackingEnemy = aiIterator.next(); aiIterator.hasNext() && enemyRemainingHp > 0; aiIterator.next()) {
+                    for (AiData allyAttackingEnemy : alliesAttackingEnemyOnNextTurn) {
                         
                         if(allyAttackingEnemy.getAtk() > enemy.getDef()) {
                             
@@ -391,7 +385,7 @@ public class AiService implements IAiService {
 
                 for (String positionToAttack : positionsToAttack) {
 
-                    aiAction = new AiAction();
+                    AiAction aiAction = new AiAction();
 
                     aiAction.setIdPiece(enemy.getPieceType());
                     aiAction.setIdAction(ID_ATTACK);
@@ -431,14 +425,13 @@ public class AiService implements IAiService {
             }
         }
 
+        aiActionsMap = aiActions.stream()
+                                .sorted((action1, action2) -> Integer.compare(action2.getWeight(), action1.getWeight()))
+                                .collect(Collectors.groupingBy(AiAction::getWeight));
+        
         while (remainingMana > 0) {
             
-            aiActionIterator = aiActions.iterator();
             
-            for (aiAction = aiActionIterator.next(); aiActionIterator.hasNext(); aiActionIterator.next()) {
-                
-                remainingMana -= aiAction.getManaCost();
-            }
         }
 
         return aiActions;
@@ -477,15 +470,12 @@ public class AiService implements IAiService {
 
         List<String> positions = new ArrayList<>();
         
-        if(canMove(piece)) {
-            
-            List<String> invalidPositionsToMove = aiData.stream()
-                    .map(pieceAux -> position(pieceAux.getxPosition(), pieceAux.getyPosition()))
-                    .collect(Collectors.toList());
-            
-            positions.addAll(positionsToDoSomething(piece, true));
-            positions.removeAll(invalidPositionsToMove);
-        }
+        List<String> invalidPositionsToMove = aiData.stream()
+                .map(pieceAux -> position(pieceAux.getxPosition(), pieceAux.getyPosition()))
+                .collect(Collectors.toList());
+        
+        positions.addAll(positionsToDoSomething(piece, true));
+        positions.removeAll(invalidPositionsToMove);
         
         return positions;
     }
@@ -494,15 +484,12 @@ public class AiService implements IAiService {
 
         List<String> positions = new ArrayList<>();
         
-        if(canAttack(piece)) {
-            
-            List<String> enemiesOfPiecePositions = enemiesOfPiece.stream()
-                    .map(enemyOfPiece -> position(enemyOfPiece.getxPosition(), enemyOfPiece.getyPosition()))
-                    .collect(Collectors.toList());
-            
-            positions.addAll(positionsToDoSomething(piece, false));
-            positions.retainAll(enemiesOfPiecePositions);
-        }
+        List<String> enemiesOfPiecePositions = enemiesOfPiece.stream()
+                .map(enemyOfPiece -> position(enemyOfPiece.getxPosition(), enemyOfPiece.getyPosition()))
+                .collect(Collectors.toList());
+        
+        positions.addAll(positionsToDoSomething(piece, false));
+        positions.retainAll(enemiesOfPiecePositions);
 
         return positions;
     }
@@ -519,7 +506,7 @@ public class AiService implements IAiService {
         Boolean l = range.isL();
 
         if (!l) {
-            positions.addAll(calculatePositionsForNonLActions(xPosition, yPosition, range));
+            positions.addAll(calculatePositionsForNonLActions(xPosition, yPosition, range, isMove));
         } else {
             positions.addAll(calculatePositionsForLActions(xPosition, yPosition, range));
         }
@@ -529,17 +516,22 @@ public class AiService implements IAiService {
 
     // Calcula posicoes validas para acoes de pecas que nao tem caracteristicas de
     // acao em L
-    private List<String> calculatePositionsForNonLActions(Integer xPosition, Integer yPosition, RangeVo range) {
+    private List<String> calculatePositionsForNonLActions(Integer xPosition, Integer yPosition, RangeVo range, Boolean isMove) {
 
         List<String> positions = new ArrayList<>();
+        List<String> unavailablePositions = piecesOnBoard.stream()
+                                                         .map(piece -> position(piece.getxPosition(), piece.getyPosition()))
+                                                         .collect(Collectors.toList());
         Integer xRange = range.getX();
         Integer yRange = range.getY();
         Integer xResult;
         Integer yResult;
         Integer x = 1;
         Integer y = 1;
+        
+        boolean isSurrounded = false;
 
-        while (x <= xRange || y <= yRange) {
+        while ((x <= xRange || y <= yRange) && !isSurrounded) {
 
             if (range.isTop()) {
 
@@ -613,7 +605,14 @@ public class AiService implements IAiService {
                     positions.add(position(xResult, yResult));
                 }
             }
-
+            
+            if(isMove) {
+                
+                if(unavailablePositions.containsAll(positions)) {
+                    isSurrounded = true;
+                }
+            }
+            
             if (x < xRange) {
                 x++;
             }
