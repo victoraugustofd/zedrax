@@ -2,9 +2,15 @@
 spring:
   datasource:
     driver: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://189.1.162.28:3306/zedraxco_zedrax?useTimezone=true&serverTimezone=UTC&useSSL=false
+#    user: zedraxco_zedrax
+#    password: "#zedrax#!@#Z#@!"
     url: jdbc:mysql://localhost:3306/zedrax?useTimezone=true&serverTimezone=UTC&useSSL=false
     user: root
     password: root
+    testWhileIdle: true
+    timeBetweenEvictionRunsMillis: 60000
+    validationQuery: SELECT 1
 
 # Hibernate
 hibernate:

@@ -1,15 +1,15 @@
 package br.com.zedrax.services.service.impl.ai;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.python.core.PyList;
-import org.python.util.PythonInterpreter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,6 @@ public class AiService implements IAiService {
     private static final String PIECE_DATA_SEPARATOR = ";";
     private static final String DATA_SEPARATOR       = ",";
     
-    private static final String PAWN  = "PAWN";
     private static final String ELITE = "ELITE";
     private static final String KING  = "KING";
 
@@ -97,9 +96,6 @@ public class AiService implements IAiService {
     private PieceRepository pieceRepository;
 
     @Autowired
-    private PythonInterpreter pythonInterpreter;
-
-    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -121,21 +117,6 @@ public class AiService implements IAiService {
                                                             aiAction.getxPositionTo(),
                                                             aiAction.getyPositionTo()))
                         .collect(Collectors.toList());
-
-        /*
-         * return aiActions.stream() .map(aiAction -> new String[] {
-         * String.valueOf(aiAction.getIdPiece()),
-         * String.valueOf(aiAction.getIdAction()),
-         * String.valueOf(aiAction.getxPositionFrom()),
-         * String.valueOf(aiAction.getyPositionFrom()),
-         * String.valueOf(aiAction.getxPositionTo()),
-         * String.valueOf(aiAction.getyPositionTo()) }) .toArray(String[][]::new);
-         */
-
-        /*
-         * String[][] matrixInput = convertJavaDataToPythonMatrix(aiData); return
-         * processWithPython(matrixInput);
-         */
     }
 
     @Override
@@ -167,7 +148,7 @@ public class AiService implements IAiService {
             moveRange = new RangeVo();
             attackRange = new RangeVo();
 
-            data.setAlly(Boolean.parseBoolean(dataOfEachPiece[INDEX_IS_ALLY]));
+            data.setAlly("1".equals(dataOfEachPiece[INDEX_IS_ALLY]));
             data.setPieceType(Integer.parseInt(dataOfEachPiece[INDEX_PIECE_TYPE]));
             data.setxPosition(Integer.parseInt(dataOfEachPiece[INDEX_X_POSITION]));
             data.setyPosition(Integer.parseInt(dataOfEachPiece[INDEX_Y_POSITION]));
@@ -182,15 +163,15 @@ public class AiService implements IAiService {
 
             moveRange.setX(Integer.parseInt(dataOfEachPiece[INDEX_MOVE_X]));
             moveRange.setY(Integer.parseInt(dataOfEachPiece[INDEX_MOVE_Y]));
-            moveRange.setTop(Boolean.parseBoolean(dataOfEachPiece[INDEX_MOVE_TOP]));
-            moveRange.setBottom(Boolean.parseBoolean(dataOfEachPiece[INDEX_MOVE_BOTTOM]));
-            moveRange.setLeft(Boolean.parseBoolean(dataOfEachPiece[INDEX_MOVE_LEFT]));
-            moveRange.setRight(Boolean.parseBoolean(dataOfEachPiece[INDEX_MOVE_RIGHT]));
-            moveRange.setTopLeft(Boolean.parseBoolean(dataOfEachPiece[INDEX_MOVE_TOP_LEFT]));
-            moveRange.setTopRight(Boolean.parseBoolean(dataOfEachPiece[INDEX_MOVE_TOP_RIGHT]));
-            moveRange.setBottomLeft(Boolean.parseBoolean(dataOfEachPiece[INDEX_MOVE_BOTTOM_LEFT]));
-            moveRange.setBottomRight(Boolean.parseBoolean(dataOfEachPiece[INDEX_MOVE_BOTTOM_RIGHT]));
-            moveRange.setL(Boolean.parseBoolean(dataOfEachPiece[INDEX_MOVE_L]));
+            moveRange.setTop("1".equals(dataOfEachPiece[INDEX_MOVE_TOP]));
+            moveRange.setBottom("1".equals(dataOfEachPiece[INDEX_MOVE_BOTTOM]));
+            moveRange.setLeft("1".equals(dataOfEachPiece[INDEX_MOVE_LEFT]));
+            moveRange.setRight("1".equals(dataOfEachPiece[INDEX_MOVE_RIGHT]));
+            moveRange.setTopLeft("1".equals(dataOfEachPiece[INDEX_MOVE_TOP_LEFT]));
+            moveRange.setTopRight("1".equals(dataOfEachPiece[INDEX_MOVE_TOP_RIGHT]));
+            moveRange.setBottomLeft("1".equals(dataOfEachPiece[INDEX_MOVE_BOTTOM_LEFT]));
+            moveRange.setBottomRight("1".equals(dataOfEachPiece[INDEX_MOVE_BOTTOM_RIGHT]));
+            moveRange.setL("1".equals(dataOfEachPiece[INDEX_MOVE_L]));
 
             move.setRange(moveRange);
 
@@ -199,15 +180,15 @@ public class AiService implements IAiService {
 
             attackRange.setX(Integer.parseInt(dataOfEachPiece[INDEX_ATTACK_X]));
             attackRange.setY(Integer.parseInt(dataOfEachPiece[INDEX_ATTACK_Y]));
-            attackRange.setTop(Boolean.parseBoolean(dataOfEachPiece[INDEX_ATTACK_TOP]));
-            attackRange.setBottom(Boolean.parseBoolean(dataOfEachPiece[INDEX_ATTACK_BOTTOM]));
-            attackRange.setLeft(Boolean.parseBoolean(dataOfEachPiece[INDEX_ATTACK_LEFT]));
-            attackRange.setRight(Boolean.parseBoolean(dataOfEachPiece[INDEX_ATTACK_RIGHT]));
-            attackRange.setTopLeft(Boolean.parseBoolean(dataOfEachPiece[INDEX_ATTACK_TOP_LEFT]));
-            attackRange.setTopRight(Boolean.parseBoolean(dataOfEachPiece[INDEX_ATTACK_TOP_RIGHT]));
-            attackRange.setBottomLeft(Boolean.parseBoolean(dataOfEachPiece[INDEX_ATTACK_BOTTOM_LEFT]));
-            attackRange.setBottomRight(Boolean.parseBoolean(dataOfEachPiece[INDEX_ATTACK_BOTTOM_RIGHT]));
-            attackRange.setL(Boolean.parseBoolean(dataOfEachPiece[INDEX_ATTACK_L]));
+            attackRange.setTop("1".equals(dataOfEachPiece[INDEX_ATTACK_TOP]));
+            attackRange.setBottom("1".equals(dataOfEachPiece[INDEX_ATTACK_BOTTOM]));
+            attackRange.setLeft("1".equals(dataOfEachPiece[INDEX_ATTACK_LEFT]));
+            attackRange.setRight("1".equals(dataOfEachPiece[INDEX_ATTACK_RIGHT]));
+            attackRange.setTopLeft("1".equals(dataOfEachPiece[INDEX_ATTACK_TOP_LEFT]));
+            attackRange.setTopRight("1".equals(dataOfEachPiece[INDEX_ATTACK_TOP_RIGHT]));
+            attackRange.setBottomLeft("1".equals(dataOfEachPiece[INDEX_ATTACK_BOTTOM_LEFT]));
+            attackRange.setBottomRight("1".equals(dataOfEachPiece[INDEX_ATTACK_BOTTOM_RIGHT]));
+            attackRange.setL("1".equals(dataOfEachPiece[INDEX_ATTACK_L]));
 
             attack.setRange(attackRange);
 
@@ -221,51 +202,7 @@ public class AiService implements IAiService {
         
         return aiData;
     }
-
-    @Override
-    public String[][] convertJavaDataToPythonMatrix(List<AiData> aiData) {
-
-        String[][] pythonMatrix = aiData.stream()
-                                        .map(data -> new String[] {
-                                                data.isAlly() ? "1" : "0",
-                                                String.valueOf(data.getPieceType()),
-                                                String.valueOf(data.getxPosition()),
-                                                String.valueOf(data.getyPosition()),
-                                                String.valueOf(data.getLevel()),
-                                                String.valueOf(data.getHp()),
-                                                String.valueOf(data.getHpMax()),
-                                                String.valueOf(data.getAtk()),
-                                                String.valueOf(data.getDef()),
-                                                String.valueOf(data.getMove().getManaCost()),
-                                                String.valueOf(data.getMove().getRange().getX()),
-                                                String.valueOf(data.getMove().getRange().getY()),
-                                                data.getMove().getRange().isTop()           ? "1" : "0",
-                                                data.getMove().getRange().isBottom()        ? "1" : "0",
-                                                data.getMove().getRange().isLeft()          ? "1" : "0",
-                                                data.getMove().getRange().isRight()         ? "1" : "0",
-                                                data.getMove().getRange().isTopLeft()       ? "1" : "0",
-                                                data.getMove().getRange().isTopRight()      ? "1" : "0",
-                                                data.getMove().getRange().isBottomLeft()    ? "1" : "0",
-                                                data.getMove().getRange().isBottomRight()   ? "1" : "0",
-                                                data.getMove().getRange().isL()             ? "1" : "0",
-                                                String.valueOf(data.getAttack().getManaCost()),
-                                                String.valueOf(data.getAttack().getRange().getX()),
-                                                String.valueOf(data.getAttack().getRange().getY()),
-                                                data.getAttack().getRange().isTop()         ? "1" : "0",
-                                                data.getAttack().getRange().isBottom()      ? "1" : "0",
-                                                data.getAttack().getRange().isLeft()        ? "1" : "0",
-                                                data.getAttack().getRange().isRight()       ? "1" : "0",
-                                                data.getAttack().getRange().isTopLeft()     ? "1" : "0",
-                                                data.getAttack().getRange().isTopRight()    ? "1" : "0",
-                                                data.getAttack().getRange().isBottomLeft()  ? "1" : "0",
-                                                data.getAttack().getRange().isBottomRight() ? "1" : "0",
-                                                data.getAttack().getRange().isL()           ? "1" : "0",
-                                            })
-                                        .toArray(String[][]::new);
-
-        return pythonMatrix;
-    }
-
+    
     @Override
     public List<AiAction> processWithJava(List<AiData> aiData) {
 
@@ -394,7 +331,8 @@ public class AiService implements IAiService {
 
                     ally = allies.stream()
                                  .filter(allyPieceAux -> (position(allyPieceAux.getxPosition(), allyPieceAux.getyPosition()).equals(positionToAttack)))
-                                 .findFirst().get();
+                                 .findFirst()
+                                 .get();
 
                     allyPiece  = idVersusNamePiece.get((long) ally.getPieceType());
                     allyType   = allyPiece.getPieceType();
@@ -424,31 +362,39 @@ public class AiService implements IAiService {
                 }
             }
         }
-
+        
         aiActionsMap = aiActions.stream()
                                 .sorted((action1, action2) -> Integer.compare(action2.getWeight(), action1.getWeight()))
-                                .collect(Collectors.groupingBy(AiAction::getWeight));
+                                .collect(Collectors.groupingBy(AiAction::getIdPiece));
         
-        while (remainingMana > 0) {
+        for(Iterator<Integer> aiActionsMapIterator = aiActionsMap.keySet().iterator(); aiActionsMapIterator.hasNext() && remainingMana > 0;) {
             
+            Integer idPiece = aiActionsMapIterator.next();
+            AiAction selectedAction;
+            List<AiAction> possibleActions = aiActionsMap.get(idPiece);
             
+            Integer maxWeight = possibleActions.stream()
+                                               .mapToInt(AiAction::getWeight)
+                                               .max()
+                                               .getAsInt();
+            
+            possibleActions = possibleActions.stream()
+                                             .filter(action -> action.getWeight() == maxWeight)
+                                             .collect(Collectors.toList());
+            
+            selectedAction = possibleActions.stream()
+                                            .findAny()
+                                            .get();
+            
+            aiActionsMap.remove(idPiece);
+            aiSelectedActions.add(selectedAction);
+            
+            remainingMana -= selectedAction.getManaCost();
         }
 
-        return aiActions;
+        return aiSelectedActions;
     }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public String[][] processWithPython(String[][] matrix) {
-
-        pythonInterpreter.execfile(getClass().getClassLoader().getResourceAsStream("ai/first_test.py"));
-        pythonInterpreter.set("matrix_input", matrix);
-
-        PyList matrixOutput = (PyList) pythonInterpreter.eval("Zedrax_Ai.process_ai(matrix_input)");
-
-        return (String[][]) matrixOutput.stream().toArray(String[][]::new);
-    }
-
+    
     private List<AiData> separateAlliesFromMatrix(List<AiData> aiData) {
 
         return separatePieces(aiData, true);
@@ -505,10 +451,10 @@ public class AiService implements IAiService {
         RangeVo range = action.getRange();
         Boolean l = range.isL();
 
-        if (!l) {
-            positions.addAll(calculatePositionsForNonLActions(xPosition, yPosition, range, isMove));
-        } else {
+        if (l && isMove) {
             positions.addAll(calculatePositionsForLActions(xPosition, yPosition, range));
+        } else {
+            positions.addAll(calculatePositionsForNonLActions(xPosition, yPosition, range, isMove));
         }
 
         return positions;
@@ -518,123 +464,134 @@ public class AiService implements IAiService {
     // acao em L
     private List<String> calculatePositionsForNonLActions(Integer xPosition, Integer yPosition, RangeVo range, Boolean isMove) {
 
-        List<String> positions = new ArrayList<>();
+        List<String> positions            = new ArrayList<>();
+        List<String> topPositions         = new ArrayList<>();
+        List<String> bottomPositions      = new ArrayList<>();
+        List<String> leftPositions        = new ArrayList<>();
+        List<String> rightPositions       = new ArrayList<>();
+        List<String> topLeftPositions     = new ArrayList<>();
+        List<String> topRightPositions    = new ArrayList<>();
+        List<String> bottomLeftPositions  = new ArrayList<>();
+        List<String> bottomRightPositions = new ArrayList<>();
+        List<String> surroundingPositions = new ArrayList<>();
+        
         List<String> unavailablePositions = piecesOnBoard.stream()
                                                          .map(piece -> position(piece.getxPosition(), piece.getyPosition()))
                                                          .collect(Collectors.toList());
         Integer xRange = range.getX();
         Integer yRange = range.getY();
-        Integer xResult;
-        Integer yResult;
-        Integer x = 1;
-        Integer y = 1;
         
         boolean isSurrounded = false;
-
-        while ((x <= xRange || y <= yRange) && !isSurrounded) {
-
-            if (range.isTop()) {
-
-                xResult = xPosition;
-                yResult = yPosition + y;
-
-                if (validatePosition(xResult, yResult)) {
-                    positions.add(position(xResult, yResult));
-                }
-            }
-            if (range.isBottom()) {
-
-                xResult = xPosition;
-                yResult = yPosition - y;
-
-                if (validatePosition(xResult, yResult)) {
-                    positions.add(position(xResult, yResult));
-                }
-            }
-            if (range.isLeft()) {
-
-                xResult = xPosition - x;
-                yResult = yPosition;
-
-                if (validatePosition(xResult, yResult)) {
-                    positions.add(position(xResult, yResult));
-                }
-            }
-            if (range.isRight()) {
-
-                xResult = xPosition + x;
-                yResult = yPosition;
-
-                if (validatePosition(xResult, yResult)) {
-                    positions.add(position(xResult, yResult));
-                }
-            }
-            if (range.isTopLeft()) {
-
-                xResult = xPosition - x;
-                yResult = yPosition + y;
-
-                if (validatePosition(xResult, yResult)) {
-                    positions.add(position(xResult, yResult));
-                }
-            }
-            if (range.isTopRight()) {
-
-                xResult = xPosition + x;
-                yResult = yPosition + y;
-
-                if (validatePosition(xResult, yResult)) {
-                    positions.add(position(xResult, yResult));
-                }
-            }
-            if (range.isBottomLeft()) {
-
-                xResult = xPosition - x;
-                yResult = yPosition - y;
-
-                if (validatePosition(xResult, yResult)) {
-                    positions.add(position(xResult, yResult));
-                }
-            }
-            if (range.isBottomRight()) {
-
-                xResult = xPosition + x;
-                yResult = yPosition - y;
-
-                if (validatePosition(xResult, yResult)) {
-                    positions.add(position(xResult, yResult));
-                }
-            }
+        
+        if (range.isTop()) {
+            topPositions.addAll(topPositions(xPosition, yPosition, yRange));
+        }
+        if (range.isBottom()) {
+            bottomPositions.addAll(bottomPositions(xPosition, yPosition, yRange));
+        }
+        if (range.isLeft()) {
+            leftPositions.addAll(leftPositions(xPosition, yPosition, xRange));
+        }
+        if (range.isRight()) {
+            rightPositions.addAll(rightPositions(xPosition, yPosition, xRange));
+        }
+        if (range.isTopLeft()) {
+            topLeftPositions.addAll(topLeftPositions(xPosition, yPosition, xRange, yRange));
+        }
+        if (range.isTopRight()) {
+            topRightPositions.addAll(topRightPositions(xPosition, yPosition, xRange, yRange));
+        }
+        if (range.isBottomLeft()) {
+            bottomLeftPositions.addAll(bottomLeftPositions(xPosition, yPosition, xRange, yRange));
+        }
+        if (range.isBottomRight()) {
+            bottomRightPositions.addAll(bottomRightPositions(xPosition, yPosition, xRange, yRange));
+        }
+        
+        if(isMove) {
             
+            surroundingPositions.add(topPositions.stream()
+                                                 .findFirst()
+                                                 .orElse(null));
+            
+            surroundingPositions.add(bottomPositions.stream()
+                                                    .findFirst()
+                                                    .orElse(null));
+            
+            surroundingPositions.add(leftPositions.stream()
+                                                  .findFirst()
+                                                  .orElse(null));
+            
+            surroundingPositions.add(rightPositions.stream()
+                                                   .findFirst()
+                                                   .orElse(null));
+            
+            surroundingPositions.add(topLeftPositions.stream()
+                                                     .findFirst()
+                                                     .orElse(null));
+            
+            surroundingPositions.add(topRightPositions.stream()
+                                                      .findFirst()
+                                                      .orElse(null));
+            
+            surroundingPositions.add(bottomLeftPositions.stream()
+                                                        .findFirst()
+                                                        .orElse(null));
+            
+            surroundingPositions.add(bottomRightPositions.stream()
+                                                         .findFirst()
+                                                         .orElse(null));
+            
+            /* Se a acao for movimentacao, deve-se validar se as posicoes diretamente ao redor da peca
+             * estao preenchidas, ou seja, se a peca esta cercada.
+             */
             if(isMove) {
                 
-                if(unavailablePositions.containsAll(positions)) {
+                if(!unavailablePositions.containsAll(surroundingPositions)) {
                     isSurrounded = true;
                 }
+            /*
+             * Se a acao for ataque, deve-se validar que a peca somente pode atacar ate o seu range,
+             * ou ate a primeira peca que encontrar.
+             */
+            } else {
+                
+                removeBlockedEnemiesOfPiece(unavailablePositions, topPositions);
+                removeBlockedEnemiesOfPiece(unavailablePositions, bottomPositions);
+                removeBlockedEnemiesOfPiece(unavailablePositions, leftPositions);
+                removeBlockedEnemiesOfPiece(unavailablePositions, rightPositions);
+                removeBlockedEnemiesOfPiece(unavailablePositions, topLeftPositions);
+                removeBlockedEnemiesOfPiece(unavailablePositions, topRightPositions);
+                removeBlockedEnemiesOfPiece(unavailablePositions, bottomLeftPositions);
+                removeBlockedEnemiesOfPiece(unavailablePositions, bottomRightPositions);
             }
             
-            if (x < xRange) {
-                x++;
-            }
-
-            if (y < yRange) {
-                y++;
+            if(!isSurrounded) {
+                
+                positions.addAll(topPositions);
+                positions.addAll(bottomPositions);
+                positions.addAll(leftPositions);
+                positions.addAll(rightPositions);
+                positions.addAll(topLeftPositions);
+                positions.addAll(topRightPositions);
+                positions.addAll(bottomLeftPositions);
+                positions.addAll(bottomRightPositions);
             }
         }
-
+        
         return positions;
     }
 
     // Calcula posicoes validas para acoes de pecas que tem caracteristicas de acao
     // em L
     private List<String> calculatePositionsForLActions(Integer xPosition, Integer yPosition, RangeVo range) {
-
+        
         List<String> positions = new ArrayList<>();
         Integer xResult;
         Integer yResult;
         Integer x;
         Integer y;
-
+        
         /*
          * Para acoes em L, ha sempre 8 possibilidades Considerando uma peca na posicao
          * (x, y), as acoes em L possiveis sao:
@@ -725,25 +682,6 @@ public class AiService implements IAiService {
         return weight;
     }
     
-    private boolean canMove(AiData piece) {
-        
-        return canDoSomething(piece, true);
-    }
-    
-    private boolean canAttack(AiData piece) {
-        
-        return canDoSomething(piece, false);
-    }
-    
-    private boolean canDoSomething(AiData piece, boolean isMove) {
-        
-        boolean canDoSomething = false;
-        
-        
-        
-        return canDoSomething;
-    }
-    
     private String position(Integer x, Integer y) {
 
         return String.valueOf(x) + String.valueOf(y);
@@ -753,7 +691,102 @@ public class AiService implements IAiService {
 
         return ((x >= 0 && x <= 10) && (y >= 0 && y <= 10));
     }
-
+    
+    private List<String> topPositions(Integer xPosition, Integer yPosition, Integer yRange) {
+        
+        return yAxisPositions(xPosition, yPosition, yRange, true);
+    }
+    
+    private List<String> bottomPositions(Integer xPosition, Integer yPosition, Integer yRange) {
+        
+        return yAxisPositions(xPosition, yPosition, yRange, false);
+    }
+    
+    private List<String> leftPositions(Integer xPosition, Integer yPosition, Integer xRange) {
+        
+        return xAxisPositions(xPosition, yPosition, xRange, false);
+    }
+    
+    private List<String> rightPositions(Integer xPosition, Integer yPosition, Integer xRange) {
+        
+        return xAxisPositions(xPosition, yPosition, xRange, true);
+    }
+    
+    private List<String> topLeftPositions(Integer xPosition, Integer yPosition, Integer xRange, Integer yRange) {
+        
+        return diagonalPositions(xPosition, yPosition, xRange, yRange, true, false);
+    }
+    
+    private List<String> topRightPositions(Integer xPosition, Integer yPosition, Integer xRange, Integer yRange) {
+        
+        return diagonalPositions(xPosition, yPosition, xRange, yRange, true, true);
+    }
+    
+    private List<String> bottomLeftPositions(Integer xPosition, Integer yPosition, Integer xRange, Integer yRange) {
+        
+        return diagonalPositions(xPosition, yPosition, xRange, yRange, false, false);
+    }
+    
+    private List<String> bottomRightPositions(Integer xPosition, Integer yPosition, Integer xRange, Integer yRange) {
+        
+        return diagonalPositions(xPosition, yPosition, xRange, yRange, false, true);
+    }
+    
+    private List<String> yAxisPositions(Integer xPosition, Integer yPosition, Integer yRange, Boolean isTop) {
+        
+        return actionPositions(0, 1, xPosition, yPosition, 0, yRange, isTop, null);
+    }
+    
+    private List<String> xAxisPositions(Integer xPosition, Integer yPosition, Integer xRange, Boolean isRight) {
+        
+        return actionPositions(1, 0, xPosition, yPosition, xRange, 0, null, isRight);
+    }
+    
+    
+    private List<String> diagonalPositions(Integer xPosition, Integer yPosition, Integer xRange, Integer yRange, Boolean isTop, Boolean isRight) {
+        
+        return actionPositions(1, 1, xPosition, yPosition, xRange, yRange, isTop, isRight);
+    }
+    
+    private List<String> actionPositions(Integer x, Integer y, Integer xPosition, Integer yPosition, Integer xRange, Integer yRange, Boolean isTop, Boolean isRight) {
+        
+        List<String> positions = new ArrayList<>();
+        Integer xResult;
+        Integer yResult;
+        
+        while (x <= xRange || y <= yRange) {
+            
+            xResult = xPosition + (isRight ? x : -x);
+            yResult = yPosition + (isTop   ? y : -y);
+            
+            if (validatePosition(xResult, yResult)) {
+                positions.add(position(xResult, yResult));
+            }
+            
+            if (x <= xRange) {
+                x++;
+            }
+            
+            if (y <= yRange) {
+                y++;
+            }
+        }
+        
+        return positions;
+    }
+    
+    private void removeBlockedEnemiesOfPiece(List<String> unavailablePositions, List<String> positions) {
+        
+        if(Collections.disjoint(unavailablePositions, positions)) {
+            
+            positions.retainAll(unavailablePositions);
+            
+            if(positions.size() > 1) {
+                positions.subList(1, positions.size()).clear();
+            }
+        }
+    }
+    
     private ActionTypeVo convertActionTypeEntityToVo(ActionType actionTypeEntity) {
 
         return modelMapper.map(actionTypeEntity, ActionTypeVo.class);
@@ -773,21 +806,4 @@ public class AiService implements IAiService {
         
         this.piecesOnBoard = piecesOnBoard;
     }
-
-    /*private void fillBoard() {
-
-        if (null == this.board) {
-
-            Integer width  = Integer.parseInt(environment.getProperty("game.board.width"));
-            Integer height = Integer.parseInt(environment.getProperty("game.board.height"));
-
-            String[][] board = IntStream.range(0, width)
-                                        .mapToObj(x -> IntStream.range(0, height)
-                                                                .mapToObj(y -> String.format("%d%d", x, y))
-                                                                .toArray(String[]::new))
-                                        .toArray(String[][]::new);
-
-            this.board = board;
-        }
-    }*/
 }
