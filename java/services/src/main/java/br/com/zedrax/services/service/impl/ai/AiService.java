@@ -45,8 +45,8 @@ public class AiService implements IAiService {
 
     private static final Integer INDEX_IS_ALLY              = INDEX++;
     private static final Integer INDEX_PIECE_TYPE           = INDEX++;
-    private static final Integer INDEX_Y_POSITION           = INDEX++;
     private static final Integer INDEX_X_POSITION           = INDEX++;
+    private static final Integer INDEX_Y_POSITION           = INDEX++;
     private static final Integer INDEX_LEVEL                = INDEX++;
     private static final Integer INDEX_HP                   = INDEX++;
     private static final Integer INDEX_HP_MAX               = INDEX++;
@@ -108,7 +108,7 @@ public class AiService implements IAiService {
 
         List<AiData> aiData = convertUnrealDataToJavaData(unrealData);
         List<AiAction> aiActions = processWithJava(aiData);
-
+        
         return aiActions.stream()
                         .map(aiAction -> new AiActionUnreal(aiAction.getIdPiece(),
                                                             aiAction.getIdAction(),
@@ -756,8 +756,8 @@ public class AiService implements IAiService {
         
         while (x <= xRange || y <= yRange) {
             
-            xResult = xPosition + (isRight ? x : -x);
-            yResult = yPosition + (isTop   ? y : -y);
+            xResult = xPosition + ((null != isRight && isRight) ? x : -x);
+            yResult = yPosition + ((null != isTop   && isTop)   ? y : -y);
             
             if (validatePosition(xResult, yResult)) {
                 positions.add(position(xResult, yResult));
