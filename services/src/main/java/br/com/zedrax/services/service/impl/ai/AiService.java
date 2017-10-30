@@ -686,7 +686,7 @@ public class AiService implements IAiService {
 
     private boolean validatePosition(Integer x, Integer y) {
 
-        return ((x >= 0 && x <= 10) && (y >= 0 && y <= 10));
+        return ((x >= 0 && x < 10) && (y >= 0 && y < 10));
     }
     
     private List<String> topPositions(Integer xPosition, Integer yPosition, Integer yRange) {
