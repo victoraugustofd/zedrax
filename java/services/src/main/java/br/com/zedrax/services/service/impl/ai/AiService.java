@@ -105,7 +105,7 @@ public class AiService implements IAiService {
 
     @Override
     public List<AiActionUnreal> process(String unrealData) {
-
+        
         List<AiData> aiData = convertUnrealDataToJavaData(unrealData);
         List<AiAction> aiActions = processWithJava(aiData);
         
@@ -209,10 +209,10 @@ public class AiService implements IAiService {
         List<AiAction> aiActions = new ArrayList<>();
         List<AiAction> aiSelectedActions = new ArrayList<>();
         
+        Integer remainingMana = Integer.parseInt(environment.getProperty("game.turn.initial-mana"));
+        
         boolean attacked;
         
-        Integer remainingMana = Integer.parseInt(environment.getProperty("game.turn.initial-mana"));
-
         List<AiData> allies = separateAlliesFromMatrix(aiData);
         List<AiData> enemies = separateEnemiesFromMatrix(aiData);
         List<AiData> alliesAttackingEnemyOnCurrentTurn;
@@ -245,7 +245,6 @@ public class AiService implements IAiService {
                                                               .collect(Collectors.toMap(PieceVo::getIdPiece, Function.identity()));
         
         for (AiData allyAux : allies) {
-            
             allyPositionsToAttack.put(allyAux, positionsToAttack(allyAux, enemies));
         }
         
@@ -304,15 +303,11 @@ public class AiService implements IAiService {
                     if(!attacked) {
                         
                         if(null != alliesAttackingEnemyOnCurrentTurn && !alliesAttackingEnemyOnCurrentTurn.isEmpty()) {
-                            
                             weight = WEIGHT_RUN_AWAY;
                         }
                     } else {
-                        
                         weight = weightForAttacks(enemyRemainingHp, enemyHpMax) * -1;
                     }
-                    
-                    weight *= enemyWeight;
                     
                     aiAction.setWeight(weight);
                     aiAction.setManaCost(enemy.getMove().getManaCost());
@@ -363,6 +358,8 @@ public class AiService implements IAiService {
             }
         }
         
+        Collections.shuffle(aiActions);
+        
         aiActionsMap = aiActions.stream()
                                 .sorted((action1, action2) -> Integer.compare(action2.getWeight(), action1.getWeight()))
                                 .collect(Collectors.groupingBy(AiAction::getIdPiece));
@@ -370,39 +367,65 @@ public class AiService implements IAiService {
         for(Iterator<Integer> aiActionsMapIterator = aiActionsMap.keySet().iterator(); aiActionsMapIterator.hasNext() && remainingMana > 0;) {
             
             Integer idPiece = aiActionsMapIterator.next();
-            AiAction selectedAction;
+            AiAction selectedAction = null;
             List<AiAction> possibleActions = aiActionsMap.get(idPiece);
+            List<AiAction> processingPossibleActions = aiActionsMap.get(idPiece);
+            final Integer processingRemainingMana = remainingMana;
             
-            Integer maxWeight = possibleActions.stream()
-                                               .mapToInt(AiAction::getWeight)
-                                               .max()
-                                               .getAsInt();
+            List<Integer> manaCosts = possibleActions.stream()
+                                                     .map(AiAction::getManaCost)
+                                                     .filter(manaCost -> manaCost <= processingRemainingMana)
+                                                     .collect(Collectors.toList())
+                                                     .stream()
+                                                     .distinct()
+                                                     .sorted((manaCost1, manaCost2) -> Integer.compare(manaCost2, manaCost1))
+                                                     .collect(Collectors.toList());
             
-            possibleActions = possibleActions.stream()
-                                             .filter(action -> action.getWeight() == maxWeight)
-                                             .collect(Collectors.toList());
-            
-            selectedAction = possibleActions.stream()
-                                            .findAny()
-                                            .get();
-            
-            aiActionsMap.remove(idPiece);
-            aiSelectedActions.add(selectedAction);
-            
-            remainingMana -= selectedAction.getManaCost();
+            if(null != manaCosts && !manaCosts.isEmpty()) {
+                
+                List<Integer> weights = possibleActions.stream()
+                                                       .map(AiAction::getWeight)
+                                                       .collect(Collectors.toList())
+                                                       .stream()
+                                                       .distinct()
+                                                       .sorted((weight1, weight2) -> Integer.compare(weight2, weight1))
+                                                       .collect(Collectors.toList());
+                
+                Integer minManaCost = Collections.min(manaCosts);
+                
+                if(minManaCost <= remainingMana) {
+                    
+                    for(Iterator<Integer> weightsIterator = weights.iterator(); weightsIterator.hasNext() && null == selectedAction;) {
+                        
+                        Integer processingWeight = weightsIterator.next();
+                        
+                        processingPossibleActions = possibleActions.stream()
+                                                                   .filter(action -> action.getWeight() == processingWeight && action.getManaCost() <= processingRemainingMana)
+                                                                   .collect(Collectors.toList());
+                        
+                        selectedAction = processingPossibleActions.stream()
+                                                                  .findAny()
+                                                                  .get();
+                        
+                        aiSelectedActions.add(selectedAction);
+                        
+                        remainingMana -= selectedAction.getManaCost();
+                    }
+                }
+            }
         }
-
+        
         return aiSelectedActions;
     }
     
     private List<AiData> separateAlliesFromMatrix(List<AiData> aiData) {
 
-        return separatePieces(aiData, true);
+        return separatePieces(aiData, Boolean.TRUE);
     }
 
     private List<AiData> separateEnemiesFromMatrix(List<AiData> aiData) {
 
-        return separatePieces(aiData, false);
+        return separatePieces(aiData, Boolean.FALSE);
     }
 
     private List<AiData> separatePieces(List<AiData> aiData, Boolean isAlly) {
@@ -417,10 +440,10 @@ public class AiService implements IAiService {
         List<String> positions = new ArrayList<>();
         
         List<String> invalidPositionsToMove = aiData.stream()
-                .map(pieceAux -> position(pieceAux.getxPosition(), pieceAux.getyPosition()))
-                .collect(Collectors.toList());
+                                                    .map(pieceAux -> position(pieceAux.getxPosition(), pieceAux.getyPosition()))
+                                                    .collect(Collectors.toList());
         
-        positions.addAll(positionsToDoSomething(piece, true));
+        positions.addAll(positionsToDoSomething(piece, Boolean.TRUE));
         positions.removeAll(invalidPositionsToMove);
         
         return positions;
@@ -431,10 +454,10 @@ public class AiService implements IAiService {
         List<String> positions = new ArrayList<>();
         
         List<String> enemiesOfPiecePositions = enemiesOfPiece.stream()
-                .map(enemyOfPiece -> position(enemyOfPiece.getxPosition(), enemyOfPiece.getyPosition()))
-                .collect(Collectors.toList());
+                                                             .map(enemyOfPiece -> position(enemyOfPiece.getxPosition(), enemyOfPiece.getyPosition()))
+                                                             .collect(Collectors.toList());
         
-        positions.addAll(positionsToDoSomething(piece, false));
+        positions.addAll(positionsToDoSomething(piece, Boolean.FALSE));
         positions.retainAll(enemiesOfPiecePositions);
 
         return positions;
@@ -508,75 +531,49 @@ public class AiService implements IAiService {
             bottomRightPositions.addAll(bottomRightPositions(xPosition, yPosition, xRange, yRange));
         }
         
+        /* Se a acao for movimentacao, deve-se validar se as posicoes diretamente ao redor da peca
+         * estao preenchidas, ou seja, se a peca esta cercada.
+         */
         if(isMove) {
             
-            surroundingPositions.add(topPositions.stream()
-                                                 .findFirst()
-                                                 .orElse(null));
+            surroundingPositions.add(neighborhoodPositions(topPositions));
+            surroundingPositions.add(neighborhoodPositions(bottomPositions));
+            surroundingPositions.add(neighborhoodPositions(leftPositions));
+            surroundingPositions.add(neighborhoodPositions(rightPositions));
+            surroundingPositions.add(neighborhoodPositions(topLeftPositions));
+            surroundingPositions.add(neighborhoodPositions(topRightPositions));
+            surroundingPositions.add(neighborhoodPositions(bottomLeftPositions));
+            surroundingPositions.add(neighborhoodPositions(bottomRightPositions));
             
-            surroundingPositions.add(bottomPositions.stream()
-                                                    .findFirst()
-                                                    .orElse(null));
-            
-            surroundingPositions.add(leftPositions.stream()
-                                                  .findFirst()
-                                                  .orElse(null));
-            
-            surroundingPositions.add(rightPositions.stream()
-                                                   .findFirst()
-                                                   .orElse(null));
-            
-            surroundingPositions.add(topLeftPositions.stream()
-                                                     .findFirst()
-                                                     .orElse(null));
-            
-            surroundingPositions.add(topRightPositions.stream()
-                                                      .findFirst()
-                                                      .orElse(null));
-            
-            surroundingPositions.add(bottomLeftPositions.stream()
-                                                        .findFirst()
-                                                        .orElse(null));
-            
-            surroundingPositions.add(bottomRightPositions.stream()
-                                                         .findFirst()
-                                                         .orElse(null));
-            
-            /* Se a acao for movimentacao, deve-se validar se as posicoes diretamente ao redor da peca
-             * estao preenchidas, ou seja, se a peca esta cercada.
-             */
-            if(isMove) {
-                
-                if(!unavailablePositions.containsAll(surroundingPositions)) {
-                    isSurrounded = true;
-                }
-            /*
-             * Se a acao for ataque, deve-se validar que a peca somente pode atacar ate o seu range,
-             * ou ate a primeira peca que encontrar.
-             */
-            } else {
-                
-                removeBlockedEnemiesOfPiece(unavailablePositions, topPositions);
-                removeBlockedEnemiesOfPiece(unavailablePositions, bottomPositions);
-                removeBlockedEnemiesOfPiece(unavailablePositions, leftPositions);
-                removeBlockedEnemiesOfPiece(unavailablePositions, rightPositions);
-                removeBlockedEnemiesOfPiece(unavailablePositions, topLeftPositions);
-                removeBlockedEnemiesOfPiece(unavailablePositions, topRightPositions);
-                removeBlockedEnemiesOfPiece(unavailablePositions, bottomLeftPositions);
-                removeBlockedEnemiesOfPiece(unavailablePositions, bottomRightPositions);
+            if(unavailablePositions.containsAll(surroundingPositions)) {
+                isSurrounded = true;
             }
+        /*
+         * Se a acao for ataque, deve-se validar que a peca somente pode atacar ate o seu range,
+         * ou ate a primeira peca que encontrar.
+         */
+        } else {
             
-            if(!isSurrounded) {
-                
-                positions.addAll(topPositions);
-                positions.addAll(bottomPositions);
-                positions.addAll(leftPositions);
-                positions.addAll(rightPositions);
-                positions.addAll(topLeftPositions);
-                positions.addAll(topRightPositions);
-                positions.addAll(bottomLeftPositions);
-                positions.addAll(bottomRightPositions);
-            }
+            removeBlockedEnemiesOfPiece(unavailablePositions, topPositions);
+            removeBlockedEnemiesOfPiece(unavailablePositions, bottomPositions);
+            removeBlockedEnemiesOfPiece(unavailablePositions, leftPositions);
+            removeBlockedEnemiesOfPiece(unavailablePositions, rightPositions);
+            removeBlockedEnemiesOfPiece(unavailablePositions, topLeftPositions);
+            removeBlockedEnemiesOfPiece(unavailablePositions, topRightPositions);
+            removeBlockedEnemiesOfPiece(unavailablePositions, bottomLeftPositions);
+            removeBlockedEnemiesOfPiece(unavailablePositions, bottomRightPositions);
+        }
+        
+        if(!isSurrounded) {
+            
+            positions.addAll(topPositions);
+            positions.addAll(bottomPositions);
+            positions.addAll(leftPositions);
+            positions.addAll(rightPositions);
+            positions.addAll(topLeftPositions);
+            positions.addAll(topRightPositions);
+            positions.addAll(bottomLeftPositions);
+            positions.addAll(bottomRightPositions);
         }
         
         return positions;
@@ -694,42 +691,42 @@ public class AiService implements IAiService {
     
     private List<String> topPositions(Integer xPosition, Integer yPosition, Integer yRange) {
         
-        return yAxisPositions(xPosition, yPosition, yRange, true);
+        return yAxisPositions(xPosition, yPosition, yRange, Boolean.TRUE);
     }
     
     private List<String> bottomPositions(Integer xPosition, Integer yPosition, Integer yRange) {
         
-        return yAxisPositions(xPosition, yPosition, yRange, false);
+        return yAxisPositions(xPosition, yPosition, yRange, Boolean.FALSE);
     }
     
     private List<String> leftPositions(Integer xPosition, Integer yPosition, Integer xRange) {
         
-        return xAxisPositions(xPosition, yPosition, xRange, false);
+        return xAxisPositions(xPosition, yPosition, xRange, Boolean.FALSE);
     }
     
     private List<String> rightPositions(Integer xPosition, Integer yPosition, Integer xRange) {
         
-        return xAxisPositions(xPosition, yPosition, xRange, true);
+        return xAxisPositions(xPosition, yPosition, xRange, Boolean.TRUE);
     }
     
     private List<String> topLeftPositions(Integer xPosition, Integer yPosition, Integer xRange, Integer yRange) {
         
-        return diagonalPositions(xPosition, yPosition, xRange, yRange, true, false);
+        return diagonalPositions(xPosition, yPosition, xRange, yRange, Boolean.TRUE, Boolean.FALSE);
     }
     
     private List<String> topRightPositions(Integer xPosition, Integer yPosition, Integer xRange, Integer yRange) {
         
-        return diagonalPositions(xPosition, yPosition, xRange, yRange, true, true);
+        return diagonalPositions(xPosition, yPosition, xRange, yRange, Boolean.TRUE, Boolean.TRUE);
     }
     
     private List<String> bottomLeftPositions(Integer xPosition, Integer yPosition, Integer xRange, Integer yRange) {
         
-        return diagonalPositions(xPosition, yPosition, xRange, yRange, false, false);
+        return diagonalPositions(xPosition, yPosition, xRange, yRange, Boolean.FALSE, Boolean.FALSE);
     }
     
     private List<String> bottomRightPositions(Integer xPosition, Integer yPosition, Integer xRange, Integer yRange) {
         
-        return diagonalPositions(xPosition, yPosition, xRange, yRange, false, true);
+        return diagonalPositions(xPosition, yPosition, xRange, yRange, Boolean.FALSE, Boolean.TRUE);
     }
     
     private List<String> yAxisPositions(Integer xPosition, Integer yPosition, Integer yRange, Boolean isTop) {
@@ -773,6 +770,13 @@ public class AiService implements IAiService {
         }
         
         return positions;
+    }
+    
+    private String neighborhoodPositions(List<String> positions) {
+        
+        return positions.stream()
+                        .findFirst()
+                        .orElse(null);
     }
     
     private void removeBlockedEnemiesOfPiece(List<String> unavailablePositions, List<String> positions) {
