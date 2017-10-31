@@ -488,7 +488,7 @@ public class AiService implements IAiService {
         Boolean l = range.isL();
 
         if (l && isMove) {
-            positions.addAll(calculatePositionsForLActions(xPosition, yPosition, range));
+            positions.addAll(calculatePositionsForLActions(xPosition, yPosition));
         } else {
             positions.addAll(calculatePositionsForNonLActions(xPosition, yPosition, range, isMove));
         }
@@ -509,15 +509,12 @@ public class AiService implements IAiService {
         List<String> topRightPositions    = new ArrayList<>();
         List<String> bottomLeftPositions  = new ArrayList<>();
         List<String> bottomRightPositions = new ArrayList<>();
-        List<String> surroundingPositions = new ArrayList<>();
         
         List<String> unavailablePositions = piecesOnBoard.stream()
                                                          .map(piece -> position(piece.getxPosition(), piece.getyPosition()))
                                                          .collect(Collectors.toList());
         Integer xRange = range.getX();
         Integer yRange = range.getY();
-        
-        boolean isSurrounded = false;
         
         if (range.isTop()) {
             topPositions.addAll(topPositions(xPosition, yPosition, yRange));
@@ -549,18 +546,14 @@ public class AiService implements IAiService {
          */
         if(isMove) {
             
-            surroundingPositions.add(neighborhoodPositions(topPositions));
-            surroundingPositions.add(neighborhoodPositions(bottomPositions));
-            surroundingPositions.add(neighborhoodPositions(leftPositions));
-            surroundingPositions.add(neighborhoodPositions(rightPositions));
-            surroundingPositions.add(neighborhoodPositions(topLeftPositions));
-            surroundingPositions.add(neighborhoodPositions(topRightPositions));
-            surroundingPositions.add(neighborhoodPositions(bottomLeftPositions));
-            surroundingPositions.add(neighborhoodPositions(bottomRightPositions));
-            
-            if(unavailablePositions.containsAll(surroundingPositions)) {
-                isSurrounded = true;
-            }
+            removeMovesToDirectionIfSurrounded(unavailablePositions, topPositions);
+            removeMovesToDirectionIfSurrounded(unavailablePositions, bottomPositions);
+            removeMovesToDirectionIfSurrounded(unavailablePositions, leftPositions);
+            removeMovesToDirectionIfSurrounded(unavailablePositions, rightPositions);
+            removeMovesToDirectionIfSurrounded(unavailablePositions, topLeftPositions);
+            removeMovesToDirectionIfSurrounded(unavailablePositions, topRightPositions);
+            removeMovesToDirectionIfSurrounded(unavailablePositions, bottomLeftPositions);
+            removeMovesToDirectionIfSurrounded(unavailablePositions, bottomRightPositions);
         /*
          * Se a acao for ataque, deve-se validar que a peca somente pode atacar ate o seu range,
          * ou ate a primeira peca que encontrar.
@@ -577,24 +570,21 @@ public class AiService implements IAiService {
             removeBlockedEnemiesOfPiece(unavailablePositions, bottomRightPositions);
         }
         
-        if(!isSurrounded) {
-            
-            positions.addAll(topPositions);
-            positions.addAll(bottomPositions);
-            positions.addAll(leftPositions);
-            positions.addAll(rightPositions);
-            positions.addAll(topLeftPositions);
-            positions.addAll(topRightPositions);
-            positions.addAll(bottomLeftPositions);
-            positions.addAll(bottomRightPositions);
-        }
+        positions.addAll(topPositions);
+        positions.addAll(bottomPositions);
+        positions.addAll(leftPositions);
+        positions.addAll(rightPositions);
+        positions.addAll(topLeftPositions);
+        positions.addAll(topRightPositions);
+        positions.addAll(bottomLeftPositions);
+        positions.addAll(bottomRightPositions);
         
         return positions;
     }
 
     // Calcula posicoes validas para acoes de pecas que tem caracteristicas de acao
     // em L
-    private List<String> calculatePositionsForLActions(Integer xPosition, Integer yPosition, RangeVo range) {
+    private List<String> calculatePositionsForLActions(Integer xPosition, Integer yPosition) {
         
         List<String> positions = new ArrayList<>();
         Integer xResult;
@@ -785,11 +775,15 @@ public class AiService implements IAiService {
         return positions;
     }
     
-    private String neighborhoodPositions(List<String> positions) {
+    private void removeMovesToDirectionIfSurrounded(List<String> unavailablePositions, List<String> positions) {
         
-        return positions.stream()
-                        .findFirst()
-                        .orElse(null);
+        String firstPosition = positions.stream()
+                                        .findFirst()
+                                        .orElse(null);
+        
+        if(null != firstPosition && unavailablePositions.contains(firstPosition)) {
+            positions.clear();
+        }
     }
     
     private void removeBlockedEnemiesOfPiece(List<String> unavailablePositions, List<String> positions) {
