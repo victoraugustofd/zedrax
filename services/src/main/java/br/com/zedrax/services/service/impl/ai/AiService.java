@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -31,7 +33,9 @@ import br.com.zedrax.services.vo.support.RangeVo;
 
 @Service("aiService")
 public class AiService implements IAiService {
-
+    
+    private final static Logger logger = Logger.getLogger(AiService.class);
+    
     private static Integer INDEX = 0;
 
     private static final String PIECE_DATA_SEPARATOR = ";";
@@ -106,8 +110,20 @@ public class AiService implements IAiService {
     @Override
     public List<AiActionUnreal> process(String unrealData) {
         
+        logger.info("Initializing process...");
+        
+        Long begin = System.currentTimeMillis();
+        Long end;
+        Long diff;
+        
         List<AiData> aiData = convertUnrealDataToJavaData(unrealData);
         List<AiAction> aiActions = processWithJava(aiData);
+        
+        end = System.currentTimeMillis();
+        diff = end - begin;
+        
+        logger.info("AI processed in " + diff + " milliseconds");
+        logger.info("Sending " + aiActions.size() + " actions to Zedrax");
         
         return aiActions.stream()
                         .map(aiAction -> new AiActionUnreal(aiAction.getIdPiece(),
@@ -753,8 +769,8 @@ public class AiService implements IAiService {
         
         while (x <= xRange || y <= yRange) {
             
-            xResult = xPosition + ((null != isRight && isRight) ? x : -x);
-            yResult = yPosition + ((null != isTop   && isTop)   ? y : -y);
+            xResult = xPosition + ((null != isRight) ? (isRight ? x : -x) : 0);
+            yResult = yPosition + ((null != isTop)   ? (isTop   ? y : -y) : 0);
             
             if (validatePosition(xResult, yResult)) {
                 positions.add(position(xResult, yResult));
@@ -781,7 +797,7 @@ public class AiService implements IAiService {
     
     private void removeBlockedEnemiesOfPiece(List<String> unavailablePositions, List<String> positions) {
         
-        if(Collections.disjoint(unavailablePositions, positions)) {
+        if(!Collections.disjoint(unavailablePositions, positions)) {
             
             positions.retainAll(unavailablePositions);
             
