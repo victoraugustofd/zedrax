@@ -253,7 +253,7 @@ public class AiService implements IAiService {
         List<String> positionsToMove;
         List<String> positionsToAttack;
         Map<AiData, List<String>> allyPositionsToAttack = new HashMap<>();
-        Map<Integer, List<AiAction>> aiActionsMap;
+        Map<String, List<AiAction>> aiActionsMap;
 
         Map<Long, PieceVo> idVersusNamePiece = pieceRepository.findAll()
                                                               .stream()
@@ -367,6 +367,7 @@ public class AiService implements IAiService {
                     
                     weight *= allyWeight;
                     
+                    aiAction.setWeight(weight);
                     aiAction.setManaCost(enemy.getAttack().getManaCost());
 
                     aiActions.add(aiAction);
@@ -378,14 +379,14 @@ public class AiService implements IAiService {
         
         aiActionsMap = aiActions.stream()
                                 .sorted((action1, action2) -> Integer.compare(action2.getWeight(), action1.getWeight()))
-                                .collect(Collectors.groupingBy(AiAction::getIdPiece));
+                                .collect(Collectors.groupingBy(processingAction -> position(processingAction.getxPositionFrom(), processingAction.getyPositionFrom())));
         
-        for(Iterator<Integer> aiActionsMapIterator = aiActionsMap.keySet().iterator(); aiActionsMapIterator.hasNext() && remainingMana > 0;) {
+        for(Iterator<String> aiActionsMapIterator = aiActionsMap.keySet().iterator(); aiActionsMapIterator.hasNext() && remainingMana > 0;) {
             
-            Integer idPiece = aiActionsMapIterator.next();
+            String position = aiActionsMapIterator.next();
             AiAction selectedAction = null;
-            List<AiAction> possibleActions = aiActionsMap.get(idPiece);
-            List<AiAction> processingPossibleActions = aiActionsMap.get(idPiece);
+            List<AiAction> possibleActions = aiActionsMap.get(position);
+            List<AiAction> processingPossibleActions = aiActionsMap.get(position);
             final Integer processingRemainingMana = remainingMana;
             
             List<Integer> manaCosts = possibleActions.stream()
@@ -422,11 +423,10 @@ public class AiService implements IAiService {
                         selectedAction = processingPossibleActions.stream()
                                                                   .findAny()
                                                                   .get();
-                        
-                        aiSelectedActions.add(selectedAction);
-                        
-                        remainingMana -= selectedAction.getManaCost();
                     }
+                    
+                    aiSelectedActions.add(selectedAction);
+                    remainingMana -= selectedAction.getManaCost();
                 }
             }
         }
