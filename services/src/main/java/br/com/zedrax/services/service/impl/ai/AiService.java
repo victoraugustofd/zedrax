@@ -126,8 +126,7 @@ public class AiService implements IAiService {
         logger.info("Sending " + aiActions.size() + " actions to Zedrax");
         
         return aiActions.stream()
-                        .map(aiAction -> new AiActionUnreal(aiAction.getIdPiece(),
-                                                            aiAction.getIdAction(),
+                        .map(aiAction -> new AiActionUnreal(aiAction.getIdAction(),
                                                             aiAction.getxPositionFrom(),
                                                             aiAction.getyPositionFrom(),
                                                             aiAction.getxPositionTo(),
@@ -285,7 +284,6 @@ public class AiService implements IAiService {
 
                     AiAction aiAction = new AiAction();
 
-                    aiAction.setIdPiece(enemy.getPieceType());
                     aiAction.setIdAction(ID_MOVE);
                     aiAction.setxPositionFrom(enemy.getxPosition());
                     aiAction.setyPositionFrom(enemy.getyPosition());
@@ -335,7 +333,6 @@ public class AiService implements IAiService {
 
                     AiAction aiAction = new AiAction();
 
-                    aiAction.setIdPiece(enemy.getPieceType());
                     aiAction.setIdAction(ID_ATTACK);
                     aiAction.setxPositionFrom(enemy.getxPosition());
                     aiAction.setyPositionFrom(enemy.getyPosition());
@@ -422,7 +419,7 @@ public class AiService implements IAiService {
                         
                         selectedAction = processingPossibleActions.stream()
                                                                   .findAny()
-                                                                  .get();
+                                                                  .orElse(null);
                     }
                     
                     aiSelectedActions.add(selectedAction);

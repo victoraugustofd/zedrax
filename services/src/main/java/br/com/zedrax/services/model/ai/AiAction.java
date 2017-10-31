@@ -2,7 +2,6 @@ package br.com.zedrax.services.model.ai;
 
 public class AiAction {
 
-    private Integer idPiece;
     private Integer idAction;
     private Integer xPositionFrom;
     private Integer yPositionFrom;
@@ -10,14 +9,6 @@ public class AiAction {
     private Integer yPositionTo;
     private Integer weight;
     private Integer manaCost;
-
-    public Integer getIdPiece() {
-        return idPiece;
-    }
-
-    public void setIdPiece(Integer idPiece) {
-        this.idPiece = idPiece;
-    }
 
     public Integer getIdAction() {
         return idAction;

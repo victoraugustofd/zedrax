@@ -2,30 +2,20 @@ package br.com.zedrax.services.model.ai;
 
 public class AiActionUnreal {
 
-    private Integer idPiece;
     private Integer idAction;
     private Integer xPositionFrom;
     private Integer yPositionFrom;
     private Integer xPositionTo;
     private Integer yPositionTo;
 
-    public AiActionUnreal(Integer idPiece, Integer idAction, Integer xPositionFrom, Integer yPositionFrom,
-            Integer xPositionTo, Integer yPositionTo) {
+    public AiActionUnreal(Integer idAction, Integer xPositionFrom, Integer yPositionFrom, Integer xPositionTo,
+            Integer yPositionTo) {
 
-        setIdPiece(idPiece);
         setIdAction(idAction);
         setxPositionFrom(xPositionFrom);
         setyPositionFrom(yPositionFrom);
         setxPositionTo(xPositionTo);
         setyPositionTo(yPositionTo);
-    }
-
-    public Integer getIdPiece() {
-        return idPiece;
-    }
-
-    public void setIdPiece(Integer idPiece) {
-        this.idPiece = idPiece;
     }
 
     public Integer getIdAction() {
