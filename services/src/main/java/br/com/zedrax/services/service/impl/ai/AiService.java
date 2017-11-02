@@ -544,14 +544,14 @@ public class AiService implements IAiService {
             bottomRightPositions.addAll(bottomRightPositions(xPosition, yPosition, xRange, yRange));
         }
         
-        positions.addAll(removeBlockedPositions(unavailablePositions, topPositions));
-        positions.addAll(removeBlockedPositions(unavailablePositions, bottomPositions));
-        positions.addAll(removeBlockedPositions(unavailablePositions, leftPositions));
-        positions.addAll(removeBlockedPositions(unavailablePositions, rightPositions));
-        positions.addAll(removeBlockedPositions(unavailablePositions, topLeftPositions));
-        positions.addAll(removeBlockedPositions(unavailablePositions, topRightPositions));
-        positions.addAll(removeBlockedPositions(unavailablePositions, bottomLeftPositions));
-        positions.addAll(removeBlockedPositions(unavailablePositions, bottomRightPositions));
+        positions.addAll(removeBlockedPositions(unavailablePositions, topPositions, isMove));
+        positions.addAll(removeBlockedPositions(unavailablePositions, bottomPositions, isMove));
+        positions.addAll(removeBlockedPositions(unavailablePositions, leftPositions, isMove));
+        positions.addAll(removeBlockedPositions(unavailablePositions, rightPositions, isMove));
+        positions.addAll(removeBlockedPositions(unavailablePositions, topLeftPositions, isMove));
+        positions.addAll(removeBlockedPositions(unavailablePositions, topRightPositions, isMove));
+        positions.addAll(removeBlockedPositions(unavailablePositions, bottomLeftPositions, isMove));
+        positions.addAll(removeBlockedPositions(unavailablePositions, bottomRightPositions, isMove));
         
         return positions;
     }
@@ -769,7 +769,7 @@ public class AiService implements IAiService {
         return positions;
     }
     
-    private List<String> removeBlockedPositions(List<String> unavailablePositions, List<String> positions) {
+    private List<String> removeBlockedPositions(List<String> unavailablePositions, List<String> positions, Boolean isMove) {
         
         String blockedPosition = positions.stream()
                                           .filter(new HashSet<String>(unavailablePositions)::contains)
@@ -777,7 +777,19 @@ public class AiService implements IAiService {
                                           .orElse(null);
         
         if(null != blockedPosition && !blockedPosition.isEmpty()) {
-            positions.subList(positions.indexOf(blockedPosition), positions.size()).clear();
+            
+            Integer index = positions.indexOf(blockedPosition);
+            
+            /*
+             * Se a acao for um ataque, a lista deve ser limpa a partir da posicao seguinte.
+             */
+            if(!isMove) {
+                index++;
+            }
+            
+            if(index < positions.size()) {
+                positions.subList(positions.indexOf(blockedPosition), positions.size()).clear();
+            }
         }
         
         return positions;
