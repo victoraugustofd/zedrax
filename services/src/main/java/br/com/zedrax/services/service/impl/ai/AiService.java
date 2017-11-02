@@ -3,12 +3,12 @@ package br.com.zedrax.services.service.impl.ai;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -152,6 +152,11 @@ public class AiService implements IAiService {
                                                                     .stream()
                                                                     .map(actionTypeEntity -> convertActionTypeEntityToVo(actionTypeEntity))
                                                                     .collect(Collectors.toMap(ActionTypeVo::getType, Function.identity()));
+        
+        Map<Long, PieceVo> pieces = pieceRepository.findAll()
+                                                   .stream()
+                                                   .map(pieceEntity -> convertPieceEntityToVo(pieceEntity))
+                                                   .collect(Collectors.toMap(PieceVo::getIdPiece, Function.identity()));
 
         for (String pieceData : pieceDataArray) {
 
@@ -164,7 +169,7 @@ public class AiService implements IAiService {
             attackRange = new RangeVo();
 
             data.setAlly("1".equals(dataOfEachPiece[INDEX_IS_ALLY]));
-            data.setPieceType(Integer.parseInt(dataOfEachPiece[INDEX_PIECE_TYPE]));
+            data.setPiece(pieces.get(Long.parseLong(dataOfEachPiece[INDEX_PIECE_TYPE])));
             data.setxPosition(Integer.parseInt(dataOfEachPiece[INDEX_X_POSITION]));
             data.setyPosition(Integer.parseInt(dataOfEachPiece[INDEX_Y_POSITION]));
             data.setLevel(Integer.parseInt(dataOfEachPiece[INDEX_LEVEL]));
@@ -241,39 +246,37 @@ public class AiService implements IAiService {
         Double enemyRemainingHp;
         Double enemyHpMax;
 
-        PieceVo enemyPiece;
-        PieceTypeVo enemyType;
-        PieceClassVo enemyClass;
         AiData ally;
-        PieceVo allyPiece;
-        PieceTypeVo allyType;
-        PieceClassVo allyClass;
 
         List<String> positionsToMove;
         List<String> positionsToAttack;
         Map<AiData, List<String>> allyPositionsToAttack = new HashMap<>();
         Map<String, List<AiAction>> aiActionsMap;
 
-        Map<Long, PieceVo> idVersusNamePiece = pieceRepository.findAll()
-                                                              .stream()
-                                                              .map(pieceEntity -> convertPieceEntityToVo(pieceEntity))
-                                                              .collect(Collectors.toMap(PieceVo::getIdPiece, Function.identity()));
+        logger.info("Processing AI with " + allies.size() + " allies vs " + enemies.size() + " enemies");
+        logger.info("Allies Positions: "  + positionsAsCoordinatesAiData(allies));
+        logger.info("Enemies Positions: " + positionsAsCoordinatesAiData(enemies));
         
         for (AiData allyAux : allies) {
             allyPositionsToAttack.put(allyAux, positionsToAttack(allyAux, enemies));
         }
         
+        logger.info("Positions that Allies can attack on next turn: " + allyPositionsToAttack.values().stream()
+                                                                                                      .map(positions -> positionsAsCoordinates(positions) + " ")
+                                                                                                      .collect(Collectors.toList())
+                                                                                                      .toString());
+        
         for (AiData enemy : enemies) {
 
-            enemyPiece  = idVersusNamePiece.get((long) enemy.getPieceType());
-            enemyType   = enemyPiece.getPieceType();
-            enemyClass  = enemyType.getPieceClass();
-            enemyWeight = weight(enemyType, enemyClass);
+            enemyWeight = weight(enemy.getPiece().getPieceType(), enemy.getPiece().getPieceType().getPieceClass());
             
             enemyRemainingHp = enemy.getHp();
             enemyHpMax = enemy.getHpMax();
-
+            
+            logger.info("Calculating move positions...");
             positionsToMove   = positionsToMove(enemy, aiData);
+            
+            logger.info("Calculating attack positions...");
             positionsToAttack = positionsToAttack(enemy, allies);
 
             if (!positionsToAttack.isEmpty() || !positionsToMove.isEmpty()) {
@@ -342,10 +345,7 @@ public class AiService implements IAiService {
                                  .findFirst()
                                  .get();
 
-                    allyPiece  = idVersusNamePiece.get((long) ally.getPieceType());
-                    allyType   = allyPiece.getPieceType();
-                    allyClass  = allyType.getPieceClass();
-                    allyWeight = weight(allyType, allyClass);
+                    allyWeight = weight(ally.getPiece().getPieceType(), ally.getPiece().getPieceType().getPieceClass());
                     
                     allyRemainingHp = ally.getHp();
                     allyHpMax = ally.getHpMax();
@@ -516,6 +516,9 @@ public class AiService implements IAiService {
         Integer xRange = range.getX();
         Integer yRange = range.getY();
         
+        logger.info("Positon: " + positionAsCoordinate(xPosition, yPosition));
+        logger.info("Range: X: " + xRange + " Y: " + yRange);
+        
         if (range.isTop()) {
             topPositions.addAll(topPositions(xPosition, yPosition, yRange));
         }
@@ -541,43 +544,14 @@ public class AiService implements IAiService {
             bottomRightPositions.addAll(bottomRightPositions(xPosition, yPosition, xRange, yRange));
         }
         
-        /* Se a acao for movimentacao, deve-se validar se as posicoes diretamente ao redor da peca
-         * estao preenchidas, ou seja, se a peca esta cercada.
-         */
-        if(isMove) {
-            
-            removeMovesToDirectionIfSurrounded(unavailablePositions, topPositions);
-            removeMovesToDirectionIfSurrounded(unavailablePositions, bottomPositions);
-            removeMovesToDirectionIfSurrounded(unavailablePositions, leftPositions);
-            removeMovesToDirectionIfSurrounded(unavailablePositions, rightPositions);
-            removeMovesToDirectionIfSurrounded(unavailablePositions, topLeftPositions);
-            removeMovesToDirectionIfSurrounded(unavailablePositions, topRightPositions);
-            removeMovesToDirectionIfSurrounded(unavailablePositions, bottomLeftPositions);
-            removeMovesToDirectionIfSurrounded(unavailablePositions, bottomRightPositions);
-        /*
-         * Se a acao for ataque, deve-se validar que a peca somente pode atacar ate o seu range,
-         * ou ate a primeira peca que encontrar.
-         */
-        } else {
-            
-            removeBlockedEnemiesOfPiece(unavailablePositions, topPositions);
-            removeBlockedEnemiesOfPiece(unavailablePositions, bottomPositions);
-            removeBlockedEnemiesOfPiece(unavailablePositions, leftPositions);
-            removeBlockedEnemiesOfPiece(unavailablePositions, rightPositions);
-            removeBlockedEnemiesOfPiece(unavailablePositions, topLeftPositions);
-            removeBlockedEnemiesOfPiece(unavailablePositions, topRightPositions);
-            removeBlockedEnemiesOfPiece(unavailablePositions, bottomLeftPositions);
-            removeBlockedEnemiesOfPiece(unavailablePositions, bottomRightPositions);
-        }
-        
-        positions.addAll(topPositions);
-        positions.addAll(bottomPositions);
-        positions.addAll(leftPositions);
-        positions.addAll(rightPositions);
-        positions.addAll(topLeftPositions);
-        positions.addAll(topRightPositions);
-        positions.addAll(bottomLeftPositions);
-        positions.addAll(bottomRightPositions);
+        positions.addAll(removeBlockedPositions(unavailablePositions, topPositions));
+        positions.addAll(removeBlockedPositions(unavailablePositions, bottomPositions));
+        positions.addAll(removeBlockedPositions(unavailablePositions, leftPositions));
+        positions.addAll(removeBlockedPositions(unavailablePositions, rightPositions));
+        positions.addAll(removeBlockedPositions(unavailablePositions, topLeftPositions));
+        positions.addAll(removeBlockedPositions(unavailablePositions, topRightPositions));
+        positions.addAll(removeBlockedPositions(unavailablePositions, bottomLeftPositions));
+        positions.addAll(removeBlockedPositions(unavailablePositions, bottomRightPositions));
         
         return positions;
     }
@@ -686,6 +660,26 @@ public class AiService implements IAiService {
 
         return String.valueOf(x) + String.valueOf(y);
     }
+    
+    private String positionAsCoordinate(Integer x, Integer y) {
+        
+        return "(" + x + ", " + y + ")";
+    }
+    
+    private String positionsAsCoordinatesAiData(List<AiData> aiData) {
+        
+        return positionsAsCoordinates(aiData.stream()
+                                            .map(data -> position(data.getxPosition(), data.getyPosition()))
+                                            .collect(Collectors.toList()));
+    }
+    
+    private String positionsAsCoordinates(List<String> positions) {
+        
+        return positions.stream()
+                        .map(position -> positionAsCoordinate(Integer.parseInt(position.substring(0, 1)), Integer.parseInt(position.substring(1, 2))))
+                        .collect(Collectors.toList())
+                        .toString();
+    }
 
     private boolean validatePosition(Integer x, Integer y) {
 
@@ -775,27 +769,18 @@ public class AiService implements IAiService {
         return positions;
     }
     
-    private void removeMovesToDirectionIfSurrounded(List<String> unavailablePositions, List<String> positions) {
+    private List<String> removeBlockedPositions(List<String> unavailablePositions, List<String> positions) {
         
-        String firstPosition = positions.stream()
-                                        .findFirst()
-                                        .orElse(null);
+        String blockedPosition = positions.stream()
+                                          .filter(new HashSet<String>(unavailablePositions)::contains)
+                                          .findFirst()
+                                          .orElse(null);
         
-        if(null != firstPosition && unavailablePositions.contains(firstPosition)) {
-            positions.clear();
+        if(null != blockedPosition && !blockedPosition.isEmpty()) {
+            positions.subList(positions.indexOf(blockedPosition), positions.size()).clear();
         }
-    }
-    
-    private void removeBlockedEnemiesOfPiece(List<String> unavailablePositions, List<String> positions) {
         
-        if(!Collections.disjoint(unavailablePositions, positions)) {
-            
-            positions.retainAll(unavailablePositions);
-            
-            if(positions.size() > 1) {
-                positions.subList(1, positions.size()).clear();
-            }
-        }
+        return positions;
     }
     
     private ActionTypeVo convertActionTypeEntityToVo(ActionType actionTypeEntity) {

@@ -1,11 +1,12 @@
 package br.com.zedrax.services.model.ai;
 
+import br.com.zedrax.services.vo.piece.PieceVo;
 import br.com.zedrax.services.vo.support.ActionVo;
 
 public class AiData {
 
     private Boolean isAlly;
-    private Integer pieceType;
+    private PieceVo piece;
     private Integer xPosition;
     private Integer yPosition;
     private Integer level;
@@ -24,12 +25,12 @@ public class AiData {
         this.isAlly = isAlly;
     }
 
-    public Integer getPieceType() {
-        return pieceType;
+    public PieceVo getPiece() {
+        return piece;
     }
 
-    public void setPieceType(Integer pieceType) {
-        this.pieceType = pieceType;
+    public void setPiece(PieceVo piece) {
+        this.piece = piece;
     }
 
     public Integer getxPosition() {

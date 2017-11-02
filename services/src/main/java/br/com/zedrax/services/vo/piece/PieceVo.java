@@ -85,4 +85,10 @@ public class PieceVo {
     public void setAttack(ActionVo attack) {
         this.attack = attack;
     }
+    
+    @Override
+    public String toString() {
+        
+        return ""; //idPiece + pieceType
+    }
 }
