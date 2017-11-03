@@ -353,7 +353,7 @@ public class AiService implements IAiService {
                     aiAction.setyPositionFrom(enemy.getyPosition());
 
                     ally = allies.stream()
-                                 .filter(allyPieceAux -> (position(allyPieceAux.getxPosition(), allyPieceAux.getyPosition()).equals(positionToAttack.substring(0, positionToAttack.indexOf(BLOCK_CHAR)))))
+                                 .filter(allyPieceAux -> (position(allyPieceAux.getxPosition(), allyPieceAux.getyPosition()).equals(positionToAttack.substring(0, 2))))
                                  .findFirst()
                                  .get();
                     
