@@ -894,8 +894,11 @@ public class AiService implements IAiService {
                 Integer positionFromSelectedAction = Integer.parseInt(position(selectedAction.getxPositionFrom(), selectedAction.getyPositionFrom()));
                 Integer positionToSelectedAction   = Integer.parseInt(position(selectedAction.getxPositionTo(), selectedAction.getyPositionTo()));
                 
-                if((positionToSelectedAction >= positionFromAction) &&
-                   (positionToSelectedAction <= positionToAction)) {
+                Integer min = Integer.min(positionFromAction, positionToAction);
+                Integer max = Integer.max(positionFromAction, positionToAction);
+                
+                if((positionToSelectedAction >= min) &&
+                   (positionToSelectedAction <= max)) {
                     
                     List<Integer> pieceBlocking = new ArrayList<>();
                     pieceBlocking.add(affectedPiece.getPieceIndex());
