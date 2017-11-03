@@ -1,5 +1,11 @@
 package br.com.zedrax.services.model.ai;
 
+import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 public class AiAction {
 
     private Integer idAction;
@@ -9,6 +15,9 @@ public class AiAction {
     private Integer yPositionTo;
     private Integer weight;
     private Integer manaCost;
+    private Boolean blocked;
+    private List<Integer> piecesBlocking;
+    private AiData affectedPiece;
 
     public Integer getIdAction() {
         return idAction;
@@ -64,5 +73,46 @@ public class AiAction {
 
     public void setManaCost(Integer manaCost) {
         this.manaCost = manaCost;
+    }
+
+    public Boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public List<Integer> getPiecesBlocking() {
+        return piecesBlocking;
+    }
+
+    public void setPiecesBlocking(List<Integer> piecesBlocking) {
+        this.piecesBlocking = piecesBlocking;
+    }
+
+    public AiData getAffectedPiece() {
+        return affectedPiece;
+    }
+
+    public void setAffectedPiece(AiData affectedPiece) {
+        this.affectedPiece = affectedPiece;
+    }
+
+    @Override
+    public String toString() {
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        try {
+
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+
+            e.printStackTrace();
+        }
+
+        return super.toString();
     }
 }

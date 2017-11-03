@@ -1,10 +1,20 @@
 package br.com.zedrax.services.model.ai;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import br.com.zedrax.services.vo.piece.PieceVo;
 import br.com.zedrax.services.vo.support.ActionVo;
 
 public class AiData {
 
+    private Integer pieceIndex;
     private Boolean isAlly;
     private PieceVo piece;
     private Integer xPosition;
@@ -16,6 +26,14 @@ public class AiData {
     private Double def;
     private ActionVo move;
     private ActionVo attack;
+
+    public Integer getPieceIndex() {
+        return pieceIndex;
+    }
+
+    public void setPieceIndex(Integer pieceIndex) {
+        this.pieceIndex = pieceIndex;
+    }
 
     public Boolean isAlly() {
         return isAlly;
@@ -103,5 +121,22 @@ public class AiData {
 
     public void setAttack(ActionVo attack) {
         this.attack = attack;
+    }
+    
+    @Override
+    public String toString() {
+        
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        
+        try {
+            
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            
+            e.printStackTrace();
+        }
+        
+        return super.toString();
     }
 }

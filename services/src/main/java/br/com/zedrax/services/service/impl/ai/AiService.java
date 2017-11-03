@@ -1,6 +1,7 @@
 package br.com.zedrax.services.service.impl.ai;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ public class AiService implements IAiService {
 
     private static final String PIECE_DATA_SEPARATOR = ";";
     private static final String DATA_SEPARATOR       = ",";
+    private static final String BLOCK_CHAR           = "|";
     
     private static final String ELITE = "ELITE";
     private static final String KING  = "KING";
@@ -47,6 +49,7 @@ public class AiService implements IAiService {
     private static final Integer ID_MOVE    = 0;
     private static final Integer ID_ATTACK  = 1;
 
+    private static final Integer INDEX_PIECE_INDEX          = INDEX++;
     private static final Integer INDEX_IS_ALLY              = INDEX++;
     private static final Integer INDEX_PIECE_TYPE           = INDEX++;
     private static final Integer INDEX_X_POSITION           = INDEX++;
@@ -106,6 +109,7 @@ public class AiService implements IAiService {
     private Environment environment;
     
     private List<AiData> piecesOnBoard;
+    private Map<String, AiData> piecesOnBoardMap;
 
     @Override
     public List<AiActionUnreal> process(String unrealData) {
@@ -168,6 +172,7 @@ public class AiService implements IAiService {
             moveRange = new RangeVo();
             attackRange = new RangeVo();
 
+            data.setPieceIndex(Integer.parseInt(dataOfEachPiece[INDEX_PIECE_INDEX]));
             data.setAlly("1".equals(dataOfEachPiece[INDEX_IS_ALLY]));
             data.setPiece(pieces.get(Long.parseLong(dataOfEachPiece[INDEX_PIECE_TYPE])));
             data.setxPosition(Integer.parseInt(dataOfEachPiece[INDEX_X_POSITION]));
@@ -219,6 +224,8 @@ public class AiService implements IAiService {
         }
         
         setPiecesOnBoard(aiData);
+        setPiecesOnBoardMap(aiData.stream()
+                                  .collect(Collectors.toMap(processingAiData -> position(processingAiData.getxPosition(), processingAiData.getyPosition()), Function.identity())));
         
         return aiData;
     }
@@ -250,6 +257,7 @@ public class AiService implements IAiService {
 
         List<String> positionsToMove;
         List<String> positionsToAttack;
+        
         Map<AiData, List<String>> allyPositionsToAttack = new HashMap<>();
         Map<String, List<AiAction>> aiActionsMap;
 
@@ -328,6 +336,10 @@ public class AiService implements IAiService {
                     
                     aiAction.setWeight(weight);
                     aiAction.setManaCost(enemy.getMove().getManaCost());
+                    
+                    blockAction(positionToMove, aiAction);
+                    
+                    aiAction.setAffectedPiece(enemy);
 
                     aiActions.add(aiAction);
                 }
@@ -341,10 +353,10 @@ public class AiService implements IAiService {
                     aiAction.setyPositionFrom(enemy.getyPosition());
 
                     ally = allies.stream()
-                                 .filter(allyPieceAux -> (position(allyPieceAux.getxPosition(), allyPieceAux.getyPosition()).equals(positionToAttack)))
+                                 .filter(allyPieceAux -> (position(allyPieceAux.getxPosition(), allyPieceAux.getyPosition()).equals(positionToAttack.substring(0, positionToAttack.indexOf(BLOCK_CHAR)))))
                                  .findFirst()
                                  .get();
-
+                    
                     allyWeight = weight(ally.getPiece().getPieceType(), ally.getPiece().getPieceType().getPieceClass());
                     
                     allyRemainingHp = ally.getHp();
@@ -367,6 +379,10 @@ public class AiService implements IAiService {
                     aiAction.setWeight(weight);
                     aiAction.setManaCost(enemy.getAttack().getManaCost());
 
+                    blockAction(positionToAttack, aiAction);
+                    
+                    aiAction.setAffectedPiece(ally);
+                    
                     aiActions.add(aiAction);
                 }
             }
@@ -414,7 +430,7 @@ public class AiService implements IAiService {
                         Integer processingWeight = weightsIterator.next();
                         
                         processingPossibleActions = possibleActions.stream()
-                                                                   .filter(action -> action.getWeight() == processingWeight && action.getManaCost() <= processingRemainingMana)
+                                                                   .filter(action -> action.getWeight() == processingWeight && action.getManaCost() <= processingRemainingMana && !action.isBlocked())
                                                                    .collect(Collectors.toList());
                         
                         selectedAction = processingPossibleActions.stream()
@@ -422,8 +438,14 @@ public class AiService implements IAiService {
                                                                   .orElse(null);
                     }
                     
-                    aiSelectedActions.add(selectedAction);
-                    remainingMana -= selectedAction.getManaCost();
+                    if(null != selectedAction) {
+                        
+                        blockActions(selectedAction, aiActions);
+                        unblockActions(selectedAction, aiActions);
+                        
+                        aiSelectedActions.add(selectedAction);
+                        remainingMana -= selectedAction.getManaCost();
+                    }
                 }
             }
         }
@@ -510,9 +532,6 @@ public class AiService implements IAiService {
         List<String> bottomLeftPositions  = new ArrayList<>();
         List<String> bottomRightPositions = new ArrayList<>();
         
-        List<String> unavailablePositions = piecesOnBoard.stream()
-                                                         .map(piece -> position(piece.getxPosition(), piece.getyPosition()))
-                                                         .collect(Collectors.toList());
         Integer xRange = range.getX();
         Integer yRange = range.getY();
         
@@ -544,14 +563,14 @@ public class AiService implements IAiService {
             bottomRightPositions.addAll(bottomRightPositions(xPosition, yPosition, xRange, yRange));
         }
         
-        positions.addAll(removeBlockedPositions(unavailablePositions, topPositions, isMove));
-        positions.addAll(removeBlockedPositions(unavailablePositions, bottomPositions, isMove));
-        positions.addAll(removeBlockedPositions(unavailablePositions, leftPositions, isMove));
-        positions.addAll(removeBlockedPositions(unavailablePositions, rightPositions, isMove));
-        positions.addAll(removeBlockedPositions(unavailablePositions, topLeftPositions, isMove));
-        positions.addAll(removeBlockedPositions(unavailablePositions, topRightPositions, isMove));
-        positions.addAll(removeBlockedPositions(unavailablePositions, bottomLeftPositions, isMove));
-        positions.addAll(removeBlockedPositions(unavailablePositions, bottomRightPositions, isMove));
+        positions.addAll(findAndSetBlockedPositionsForNonLActions(topPositions, isMove));
+        positions.addAll(findAndSetBlockedPositionsForNonLActions(bottomPositions, isMove));
+        positions.addAll(findAndSetBlockedPositionsForNonLActions(leftPositions, isMove));
+        positions.addAll(findAndSetBlockedPositionsForNonLActions(rightPositions, isMove));
+        positions.addAll(findAndSetBlockedPositionsForNonLActions(topLeftPositions, isMove));
+        positions.addAll(findAndSetBlockedPositionsForNonLActions(topRightPositions, isMove));
+        positions.addAll(findAndSetBlockedPositionsForNonLActions(bottomLeftPositions, isMove));
+        positions.addAll(findAndSetBlockedPositionsForNonLActions(bottomRightPositions, isMove));
         
         return positions;
     }
@@ -621,7 +640,7 @@ public class AiService implements IAiService {
             y = 1;
         }
 
-        return positions;
+        return findAndSetBlockedPositionsForLActions(positions);
     }
 
     private Integer weight(PieceTypeVo type, PieceClassVo clazz) {
@@ -769,39 +788,140 @@ public class AiService implements IAiService {
         return positions;
     }
     
-    private List<String> removeBlockedPositions(List<String> unavailablePositions, List<String> positions, Boolean isMove) {
+    private List<String> findAndSetBlockedPositionsForNonLActions(List<String> positions, Boolean isMove) {
         
         String blockedPosition = positions.stream()
-                                          .filter(new HashSet<String>(unavailablePositions)::contains)
-                                          .findFirst()
-                                          .orElse(null);
-        
-        if(null != blockedPosition && !blockedPosition.isEmpty()) {
-            
+                                          .filter(new HashSet<String>(piecesOnBoardMap.keySet())::contains)
+                                          .findFirst().orElse(null);
+
+        if (null != blockedPosition && !blockedPosition.isEmpty()) {
+
             Integer index = positions.indexOf(blockedPosition);
+            Integer pieceIndex = piecesOnBoardMap.get(blockedPosition).getPieceIndex();
             
             /*
              * Se a acao for um ataque, a lista deve ser limpa a partir da posicao seguinte.
              */
-            if(!isMove) {
+            if (!isMove) {
                 index++;
             }
-            
-            if(index < positions.size()) {
-                positions.subList(positions.indexOf(blockedPosition), positions.size()).clear();
+
+            if (index < positions.size()) {
+                
+                Integer i = 0;
+                List<String> alteredPositions = positions.stream()
+                                                         .skip(index)
+                                                         .map(position -> position + BLOCK_CHAR + pieceIndex)
+                                                         .collect(Collectors.toList());
+                
+                for(String alteredPosition : alteredPositions) {
+                    
+                    AiData piece = piecesOnBoardMap.get(alteredPosition.substring(0, 2));
+                    
+                    if(null != piece && pieceIndex != piece.getPieceIndex()) {
+                        alteredPositions.set(i, alteredPosition + BLOCK_CHAR + piece.getPieceIndex());
+                    }
+                    
+                    i++;
+                }
+                
+                positions.subList(index, positions.size()).clear();
+                
+                positions.addAll(alteredPositions);
             }
         }
         
         return positions;
     }
     
+    private List<String> findAndSetBlockedPositionsForLActions(List<String> positions) {
+        
+        List<String> alteredPositions = new ArrayList<>();
+        AiData piece;
+        
+        for (String position : positions) {
+            
+            if(piecesOnBoardMap.containsKey(position)) {
+                
+                piece = piecesOnBoardMap.get(position);
+                position += BLOCK_CHAR + piece.getPieceIndex();
+            }
+            
+            alteredPositions.add(position);
+        }
+        
+        return alteredPositions;
+    }
+    
+    private void blockAction(String position, AiAction aiAction) {
+        
+        List<Integer> piecesBlocking;
+        String piecesBlockingFromIndex;
+        
+        aiAction.setBlocked(Boolean.FALSE);
+        
+        if(position.contains(BLOCK_CHAR)) {
+            
+            aiAction.setBlocked(Boolean.TRUE);
+            piecesBlocking = new ArrayList<>();
+            
+            piecesBlockingFromIndex = position.substring(position.indexOf(BLOCK_CHAR));
+            
+            piecesBlocking.addAll(Arrays.asList(piecesBlockingFromIndex.split(BLOCK_CHAR))
+                                        .stream()
+                                        .filter(pieceIndex -> !BLOCK_CHAR.equals(pieceIndex))
+                                        .map(Integer::parseInt)
+                                        .collect(Collectors.toList()));
+            
+            aiAction.setPiecesBlocking(piecesBlocking);
+        }
+    }
+    
+    private void blockActions(AiAction selectedAction, List<AiAction> aiActions) {
+        
+        AiData affectedPiece = selectedAction.getAffectedPiece();
+        Integer index = 0;
+        
+        for (AiAction aiAction : aiActions) {
+            
+            if(!aiAction.isBlocked()) {
+                
+                Integer positionFromAction         = Integer.parseInt(position(aiAction.getxPositionFrom(), aiAction.getyPositionFrom()));
+                Integer positionToAction           = Integer.parseInt(position(aiAction.getxPositionTo(), aiAction.getyPositionTo()));
+                Integer positionFromSelectedAction = Integer.parseInt(position(selectedAction.getxPositionFrom(), selectedAction.getyPositionFrom()));
+                Integer positionToSelectedAction   = Integer.parseInt(position(selectedAction.getxPositionTo(), selectedAction.getyPositionTo()));
+                
+                /*if((positionToSelectedAction > positionFromAction) &&
+                   (positionToSelectedAction < positionToAction)) {*/
+                if((positionToAction >= positionToSelectedAction) &&
+                   (positionToAction <= positionToSelectedAction)) {
+                    
+                    List<Integer> pieceBlocking = new ArrayList<>();
+                    pieceBlocking.add(affectedPiece.getPieceIndex());
+                    
+                    aiAction.setBlocked(true);
+                    aiAction.setPiecesBlocking(pieceBlocking);
+                    
+                    aiActions.set(index, aiAction);
+                }
+            }
+            
+            index++;
+        }
+    }
+    
+    private void unblockActions(AiAction aiAction, List<AiAction> aiActions) {
+        
+        
+    }
+    
     private ActionTypeVo convertActionTypeEntityToVo(ActionType actionTypeEntity) {
-
+        
         return modelMapper.map(actionTypeEntity, ActionTypeVo.class);
     }
 
     private PieceVo convertPieceEntityToVo(Piece pieceEntity) {
-
+        
         return modelMapper.map(pieceEntity, PieceVo.class);
     }
 
@@ -811,7 +931,17 @@ public class AiService implements IAiService {
     }
 
     public void setPiecesOnBoard(List<AiData> piecesOnBoard) {
-        
+
         this.piecesOnBoard = piecesOnBoard;
+    }
+
+    public Map<String, AiData> getPiecesOnBoardMap() {
+        
+        return piecesOnBoardMap;
+    }
+
+    public void setPiecesOnBoardMap(Map<String, AiData> piecesOnBoardMap) {
+        
+        this.piecesOnBoardMap = piecesOnBoardMap;
     }
 }
