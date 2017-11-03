@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -259,7 +260,7 @@ public class AiService implements IAiService {
         List<String> positionsToAttack;
         
         Map<AiData, List<String>> allyPositionsToAttack = new HashMap<>();
-        Map<String, List<AiAction>> aiActionsMap;
+        Map<Integer, List<AiAction>> aiActionsMap;
 
         logger.info("Processing AI with " + allies.size() + " allies vs " + enemies.size() + " enemies");
         logger.info("Allies Positions: "  + positionsAsCoordinatesAiData(allies));
@@ -294,7 +295,8 @@ public class AiService implements IAiService {
                 for (String positionToMove : positionsToMove) {
 
                     AiAction aiAction = new AiAction();
-
+                    
+                    aiAction.setPieceIndex(enemy.getPieceIndex());
                     aiAction.setIdAction(ID_MOVE);
                     aiAction.setxPositionFrom(enemy.getxPosition());
                     aiAction.setyPositionFrom(enemy.getyPosition());
@@ -347,7 +349,8 @@ public class AiService implements IAiService {
                 for (String positionToAttack : positionsToAttack) {
 
                     AiAction aiAction = new AiAction();
-
+                    
+                    aiAction.setPieceIndex(enemy.getPieceIndex());
                     aiAction.setIdAction(ID_ATTACK);
                     aiAction.setxPositionFrom(enemy.getxPosition());
                     aiAction.setyPositionFrom(enemy.getyPosition());
@@ -392,14 +395,14 @@ public class AiService implements IAiService {
         
         aiActionsMap = aiActions.stream()
                                 .sorted((action1, action2) -> Integer.compare(action2.getWeight(), action1.getWeight()))
-                                .collect(Collectors.groupingBy(processingAction -> position(processingAction.getxPositionFrom(), processingAction.getyPositionFrom())));
+                                .collect(Collectors.groupingBy(AiAction::getPieceIndex, LinkedHashMap::new, Collectors.toList()));
         
-        for(Iterator<String> aiActionsMapIterator = aiActionsMap.keySet().iterator(); aiActionsMapIterator.hasNext() && remainingMana > 0;) {
+        for(Iterator<Integer> aiActionsMapIterator = aiActionsMap.keySet().iterator(); aiActionsMapIterator.hasNext() && remainingMana > 0;) {
             
-            String position = aiActionsMapIterator.next();
+            Integer pieceIndex = aiActionsMapIterator.next();
             AiAction selectedAction = null;
-            List<AiAction> possibleActions = aiActionsMap.get(position);
-            List<AiAction> processingPossibleActions = aiActionsMap.get(position);
+            List<AiAction> possibleActions = aiActionsMap.get(pieceIndex);
+            List<AiAction> processingPossibleActions = aiActionsMap.get(pieceIndex);
             final Integer processingRemainingMana = remainingMana;
             
             List<Integer> manaCosts = possibleActions.stream()

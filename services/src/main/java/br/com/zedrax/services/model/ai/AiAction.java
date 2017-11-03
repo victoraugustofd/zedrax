@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class AiAction {
 
+    private Integer pieceIndex;
     private Integer idAction;
     private Integer xPositionFrom;
     private Integer yPositionFrom;
@@ -18,6 +19,14 @@ public class AiAction {
     private Boolean blocked;
     private List<Integer> piecesBlocking;
     private AiData affectedPiece;
+
+    public Integer getPieceIndex() {
+        return pieceIndex;
+    }
+
+    public void setPieceIndex(Integer pieceIndex) {
+        this.pieceIndex = pieceIndex;
+    }
 
     public Integer getIdAction() {
         return idAction;
